@@ -11,7 +11,7 @@ export default function Layout() {
         position="fixed"
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: "#0D47A1", // ← aquí se define el azul oscuro
+          backgroundColor: "#0D47A1",
         }}
       >
         <Toolbar>
@@ -28,8 +28,17 @@ export default function Layout() {
       <DrawerMenu />
 
       {/* Contenido principal */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3, backgroundColor: "#E5E5E5" }}>
-        <Toolbar /> {/* Espacio para AppBar */}
+      <Box
+        component="main"
+        style={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#f3f2f2", // fondo amarillo como quieres
+          minHeight: "100vh", 
+        }}
+      >
+        {/* <Toolbar /> */}
         <Outlet />
       </Box>
     </Box>

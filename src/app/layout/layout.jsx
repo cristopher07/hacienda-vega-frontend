@@ -34,7 +34,7 @@ export default function Layout() {
           flexGrow: 1,
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "#f3f2f2", // fondo amarillo como quieres
+          backgroundColor: "#f3f2f2",
           minHeight: "100vh", 
         }}
       >

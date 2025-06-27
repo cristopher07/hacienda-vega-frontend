@@ -92,7 +92,15 @@ export default function Form({
           variant="contained"
           color="secondary"
           type="button"
-          sx={{ mx: 1 }}
+          sx={{
+            backgroundColor: "#ffffff",
+            color: "black",
+            mx: 1,
+            "&:hover": {
+              backgroundColor: "#ffffff", // mismo color que normal para no cambiar
+              boxShadow: "none", // quitar sombra
+            },
+          }}
           onClick={() => onCancelar(false)}
         >
           CANCELAR

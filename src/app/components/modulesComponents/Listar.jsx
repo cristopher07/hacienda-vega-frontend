@@ -23,16 +23,15 @@ export default function Listar({
   pageFix,
   setpageFix,
 }) {
+  console.log("Listar data: ", data);
   const handleChangePage = (_, newPage) => setpageFix(newPage);
-
-  console.log("columns: ", columns);
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setpageFix(0);
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden", marginTop: "15px" }}>
+    <Paper sx={{ width: "100%", overflow: "hidden", marginTop: "10px" }}>
       <TableContainer component={Box}>
         <Table size="small" stickyHeader>
           <TableHead>

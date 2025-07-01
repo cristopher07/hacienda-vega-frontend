@@ -17,17 +17,17 @@ export default function Form({
   titulo = "",
 }) {
   const [formulario, setFormulario] = useState({
-    descripcion: "",
+    nombre: "",
     ...data,
   });
 
   const [observacionLength, setObservacionLength] = useState(
-    250 - (typeof data?.descripcion === "string" ? data.descripcion.length : 0)
+    250 - (typeof data?.nombre === "string" ? data.nombre.length : 0)
   );
 
   useEffect(() => {
-    if (data?.descripcion) {
-      setObservacionLength(250 - data.descripcion.length);
+    if (data?.nombre) {
+      setObservacionLength(250 - data.nombre.length);
     }
   }, [data]);
 
@@ -39,7 +39,7 @@ export default function Form({
       [name]: value,
     }));
 
-    if (name === "descripcion") {
+    if (name === "nombre") {
       setObservacionLength(250 - value.length);
     }
   };
@@ -52,7 +52,7 @@ export default function Form({
       return;
     }
 
-    if (!formulario.descripcion) return;
+    if (!formulario.nombre) return;
 
     if (data) {
       fnEditar(formulario);
@@ -75,10 +75,10 @@ export default function Form({
             <TextField
               required
               fullWidth
-              id="descripcion"
-              name="descripcion"
+              id="nombre"
+              name="nombre"
               label={`Descripción (${observacionLength})`}
-              value={formulario.descripcion}
+              value={formulario.nombre}
               onChange={handleInputChange}
               placeholder="Descripción"
               variant="outlined"

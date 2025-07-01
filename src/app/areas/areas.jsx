@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, Snackbar } from "@mui/material";
 import MainLayout from "../components/layout/MainLayout";
 import { Replay } from "@mui/icons-material";
@@ -6,11 +6,13 @@ import Buscar from "../components/modulesComponents/Buscar";
 import Listar from "../components/modulesComponents/Listar";
 import Confirmation from "../components/modulesComponents/Confirmation";
 import Form from "../components/modulesComponents/Form";
+import { addArea, deleteArea, editArea, getAreas } from "./services/areaService";
+import { useSnackbar } from 'notistack';
 
 export default function Areas() {
   const [title] = useState("ÁREAS");
   const [subTitle] = useState(`Gestión de Áreas`);
-
+  const { enqueueSnackbar } = useSnackbar();
   /** Variable para la lógica de visualización del formulariom lista y busqueda */
   const [verForm, setVerForm] = useState(false);
 
@@ -34,6 +36,12 @@ export default function Areas() {
   });
   const [openDelete, setOpenDelete] = useState(false);
 
+  useEffect(() => {
+    // Cargar los datos al iniciar el componente
+    getAreaAll(buscar);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [buscar, rowsPerPage, pageFix]);
+
   const handleClose = () => {
     setAlertMensaje({
       open: false,
@@ -42,9 +50,121 @@ export default function Areas() {
     });
   };
 
+  const getAreaAll = async (busqueda) => {
+    let objResponse = await getAreas(busqueda, rowsPerPage, pageFix, '');
+    if (objResponse.valid) {
+      setData(objResponse.data);
+    } else {
+      setData([]);
+      setAlertMensaje({
+        open: true,
+        message: objResponse.message || "No se encontraron áreas.",
+        alertType: "warning",
+      });
+    }
+  };
+
+    /**
+   * AGREGAR LOS COLORES NUEVOS.
+   *
+   * @param {null} null No tiene Parametros.
+   * @public
+   */
+  const addAreas = async (obj) => {
+    let objRespuesta = await addArea({
+      ...obj,
+    });
+    if (objRespuesta.valid) {
+      getAreaAll(buscar);
+      enqueueSnackbar("Se agregó correctamente el área.", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    } else {
+    enqueueSnackbar(objRespuesta.msg || 'Error al crear el color.', {
+      variant: 'error',
+      anchorOrigin: {
+        vertical: 'bottom',
+        horizontal: 'right',
+      },
+    });
+  }
+    setVerForm(false);
+  };
+
+  /**
+   * EDITAR LOS COLORES ACTIVOS.
+   *
+   * @param {null} null No tiene Parametros.
+   * @public
+   */
+  const edit = async (obj) => {
+    let objRespuesta = await editArea({
+      ...obj,
+    });
+    if (objRespuesta.valid) {
+      getAreaAll(buscar);
+      enqueueSnackbar("Se editó correctamente el área.", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    } else {
+      enqueueSnackbar(objRespuesta.msg || 'Error al editar el área.', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'right',
+        },
+      });
+    }
+    setVerForm(false);
+    setSelectedData();
+  };
+
+  /**
+   * ELIMINA EL COLOR SEGUN VALIDACIONES REALIZADAS.
+   *
+   * @param {int} index Id del período a eliminar
+   * @return {alertMessage} Mensaje de respuesta correcta o error
+   * @public
+   */
+  const deleteAreas = async (index) => {
+    let objRespuesta = await deleteArea(
+      index.id_area,
+    );
+    if (objRespuesta.valid) {
+      getAreaAll(buscar);
+      enqueueSnackbar("Se eliminó correctamente el área.", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    } else {
+      enqueueSnackbar(objRespuesta.msg || 'Error al eliminar el área.', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'right',
+        },
+      });
+    }
+    setVerForm(false);
+    setSelectedData();
+  };
+
+ 
+
     const columns = [
     {
-      id: "id_Area",
+      id: "id_area",
       label: "ID",
     },
     {
@@ -151,9 +271,9 @@ export default function Areas() {
                     handleClose={() => setOpenDelete(false)}
                     title={"Advertencia"}
                     message={`¿Está seguro de eliminar el área?: ${
-                      selectedData ? selectedData.descripcion : ""
+                      selectedData ? selectedData.nombre : ""
                     }`}
-                    handleOk={() => {}}
+                    handleOk={() => { deleteAreas(selectedData); setOpenDelete(false); }}
                   />
             </>
           ) : (
@@ -163,11 +283,11 @@ export default function Areas() {
                 setVerForm(e);
                 setSelectedData();
               }}
-              // fnEditar={editColor}
-              // fnGuardar={addColor}
+              fnEditar={edit}
+              fnGuardar={addAreas}
               data={selectedData}
               setData={setSelectedData}
-              formulario={"COLOR"}
+              formulario={"ÁREAS"}
             />
                <Snackbar
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}

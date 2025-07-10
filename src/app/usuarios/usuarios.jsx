@@ -5,13 +5,14 @@ import { Replay } from "@mui/icons-material";
 import Buscar from "../components/modulesComponents/Buscar";
 import Listar from "../components/modulesComponents/Listar";
 import Confirmation from "../components/modulesComponents/Confirmation";
-import Form from "../components/modulesComponents/Form";
-import { addArea, deleteArea, editArea, getAreas } from "./services/areaService";
-import { useSnackbar } from 'notistack';
 
-export default function Areas() {
-  const [title] = useState("ÁREAS");
-  const [subTitle] = useState(`Gestión de Áreas`);
+import { useSnackbar } from 'notistack';
+import { addUsuario, deleteUsuario, editUsuario, getUsuarioByQuery } from "./services/usuarioService";
+import FormUsuarios from "./usuarioForm";
+
+export default function Usuarios() {
+  const [title] = useState("USUARIOS");
+  const [subTitle] = useState(`Gestión de Usuarios`);
   const { enqueueSnackbar } = useSnackbar();
   /** Variable para la lógica de visualización del formulariom lista y busqueda */
   const [verForm, setVerForm] = useState(false);
@@ -51,14 +52,14 @@ export default function Areas() {
   };
 
   const getAreaAll = async (busqueda) => {
-    let objResponse = await getAreas(busqueda, rowsPerPage, pageFix, '');
+    let objResponse = await getUsuarioByQuery(busqueda, rowsPerPage, pageFix, '');
     if (objResponse.valid) {
       setData(objResponse.data);
     } else {
       setData([]);
       setAlertMensaje({
         open: true,
-        message: objResponse.message || "No se encontraron áreas.",
+        message: objResponse.message || "No se encontraron usuarios.",
         alertType: "warning",
       });
     }
@@ -71,12 +72,12 @@ export default function Areas() {
    * @public
    */
   const addAreas = async (obj) => {
-    let objRespuesta = await addArea({
+    let objRespuesta = await addUsuario({
       ...obj,
     });
     if (objRespuesta.valid) {
       getAreaAll(buscar);
-      enqueueSnackbar("Se agregó correctamente el área.", {
+      enqueueSnackbar("Se agregó correctamente el usuario.", {
         variant: "success",
         anchorOrigin: {
           vertical: "bottom",
@@ -84,7 +85,7 @@ export default function Areas() {
         },
       });
     } else {
-    enqueueSnackbar(objRespuesta.msg || 'Error al crear el color.', {
+    enqueueSnackbar(objRespuesta.msg || 'Error al crear el usuario.', {
       variant: 'error',
       anchorOrigin: {
         vertical: 'bottom',
@@ -102,12 +103,12 @@ export default function Areas() {
    * @public
    */
   const edit = async (obj) => {
-    let objRespuesta = await editArea({
+    let objRespuesta = await editUsuario({
       ...obj,
     });
     if (objRespuesta.valid) {
       getAreaAll(buscar);
-      enqueueSnackbar("Se editó correctamente el área.", {
+      enqueueSnackbar("Se editó correctamente el usuario.", {
         variant: "success",
         anchorOrigin: {
           vertical: "bottom",
@@ -115,7 +116,7 @@ export default function Areas() {
         },
       });
     } else {
-      enqueueSnackbar(objRespuesta.msg || 'Error al editar el área.', {
+      enqueueSnackbar(objRespuesta.msg || 'Error al editar el usuario.', {
         variant: 'error',
         anchorOrigin: {
           vertical: 'bottom',
@@ -134,13 +135,13 @@ export default function Areas() {
    * @return {alertMessage} Mensaje de respuesta correcta o error
    * @public
    */
-  const deleteAreas = async (index) => {
-    let objRespuesta = await deleteArea(
-      index.id_area,
+  const deleteUsuarios = async (index) => {
+    let objRespuesta = await deleteUsuario(
+      index.id_usuario,
     );
     if (objRespuesta.valid) {
       getAreaAll(buscar);
-      enqueueSnackbar("Se eliminó correctamente el área.", {
+      enqueueSnackbar("Se eliminó correctamente el usuario.", {
         variant: "success",
         anchorOrigin: {
           vertical: "bottom",
@@ -148,7 +149,7 @@ export default function Areas() {
         },
       });
     } else {
-      enqueueSnackbar(objRespuesta.msg || 'Error al eliminar el área.', {
+      enqueueSnackbar(objRespuesta.msg || 'Error al eliminar el usuario.', {
         variant: 'error',
         anchorOrigin: {
           vertical: 'bottom',
@@ -164,12 +165,24 @@ export default function Areas() {
 
     const columns = [
     {
-      id: "id_area",
+      id: "id_usuario",
       label: "ID",
     },
     {
       id: "nombre",
       label: "Nombre",
+    },
+     {
+      id: "usuario",
+      label: "Usuario",
+    },
+      {
+      id: "rol",
+      label: "Rol",
+    },
+        {
+      id: "nombreArea",
+      label: "Nombre Área",
     },
     {
       id: "actions",
@@ -258,15 +271,15 @@ export default function Areas() {
                     open={openDelete}
                     handleClose={() => setOpenDelete(false)}
                     title={"Advertencia"}
-                    message={`¿Está seguro de eliminar el área?: ${
-                      selectedData ? selectedData.nombre : ""
+                    message={`¿Está seguro de eliminar el Usuario?: ${
+                      selectedData ? selectedData.usuario : ""
                     }`}
-                    handleOk={() => { deleteAreas(selectedData); setOpenDelete(false); }}
+                    handleOk={() => { deleteUsuarios(selectedData); setOpenDelete(false); }}
                   />
             </>
           ) : (
             <>
-              <Form
+              <FormUsuarios
               onCancelar={(e) => {
                 setVerForm(e);
                 setSelectedData();
@@ -275,7 +288,8 @@ export default function Areas() {
               fnGuardar={addAreas}
               data={selectedData}
               setData={setSelectedData}
-              fo/>
+              enqueueSnackbar={enqueueSnackbar}
+              />
                <Snackbar
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 open={alertMessage.open}

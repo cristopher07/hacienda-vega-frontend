@@ -23,7 +23,6 @@ export default function Listar({
   pageFix,
   setpageFix,
 }) {
-  console.log("Listar data: ", data);
   const handleChangePage = (_, newPage) => setpageFix(newPage);
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -37,7 +36,7 @@ export default function Listar({
           <TableHead>
             <TableRow>
               {columns.map((col) => (
-                <TableCell key={col.id}>{col.label}</TableCell>
+                <TableCell key={col.id}  sx={{ fontWeight: 'bold' }}>{col.label}</TableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -92,6 +91,10 @@ export default function Listar({
         page={pageFix}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
+         labelRowsPerPage="Filas por página:"
+        labelDisplayedRows={({ from, to, count }) =>
+        `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`
+      }
       />
     </Paper>
   );

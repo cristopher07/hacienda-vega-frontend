@@ -84,7 +84,7 @@ export default function MainLayout({
 
         {/* Title + Meta */}
         <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
-          <Typography variant="h4" color="primary">
+          <Typography variant="h5" color="primary" sx={{ fontWeight: "bold" }}>
             {title}
           </Typography>
 
@@ -97,9 +97,9 @@ export default function MainLayout({
 
         {/* Subtitle */}
         {(subtitle || subtitleItemsLeft || subtitleItemsRight) && (
-          <Box sx={{ mt: 2 }}>
+          <Box sx={{ mt: 1 }}>
             {subtitle && (
-              <Typography variant="body1" color="textSecondary">
+              <Typography variant="body1" color="textSecondary" >
                 {subtitle}
               </Typography>
             )}
@@ -128,7 +128,7 @@ export default function MainLayout({
         {/* Main content */}
         <Box
           sx={{
-            mt: 5,
+            mt: 2,
             opacity: disabledContent ? 0.5 : 1,
             pointerEvents: disabledContent ? "none" : "auto",
           }}

@@ -13,6 +13,17 @@ export const getAreas = async (obj, rowsPerPage, pageFix, pagination) => {
     }
 };
 
+//// LISTAR area selects
+export const listMarca = async () => {
+    const urlMarcas = '/areas/all';
+    try {
+      let respuesta = await axios.get(URL + urlMarcas + '?paginacion=0');
+      return respuesta.data;
+    } catch (error) {
+      return error;
+    }
+};
+
 export const addArea = async (obj) => {
     try {
         const response = await axios.post(URL + '/areas/add', obj);
@@ -23,7 +34,6 @@ export const addArea = async (obj) => {
 }
 
 export const editArea = async (obj) => {
-    console.log("obj: ", obj);
     try {
         const response = await axios.post(URL + `/areas/Update/${obj.id_area}`, obj);
         return response.data;
@@ -34,7 +44,6 @@ export const editArea = async (obj) => {
 };
 
 export const deleteArea = async (id) => {
-    console.log("---id: ", id);
     try {
         let obj = {
             id_area: id

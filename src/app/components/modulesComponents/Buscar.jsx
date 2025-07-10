@@ -13,6 +13,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 
 export default function Buscar({ setVerForm, onBusqueda, setpageFix, buscar }) {
+
   const [busquedaAux, setBusquedaAux] = useState(buscar + "");
 
   const handleNuevo = () => {

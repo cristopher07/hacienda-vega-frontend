@@ -16,7 +16,7 @@ export default function Layout() {
       >
         <Toolbar>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-            Hacienda la Vega
+            HACIENDA LA VEGA
           </Typography>
           <IconButton color="inherit" edge="end">
             <UserMenu />

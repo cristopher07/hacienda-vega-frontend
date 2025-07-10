@@ -8,14 +8,15 @@ import {
   ListItemText,
   Toolbar,
 } from "@mui/material";
-import { Dashboard, Person } from "@mui/icons-material";
+import {  Domain, Inventory2, Person } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
 
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: "Áreas", icon: <Dashboard />, path: "/dashboard" },
-  { text: "Catálogos", icon: <Person />, path: "/profile" },
+  { text: "Áreas", icon: <Domain  />, path: "/areas" },
+  { text: "Usuarios", icon: <Person />, path: "/usuarios" },
+  { text: "Inventarios", icon: <Inventory2  />, path: "/inventarios" },
 ];
 
 export default function DrawerMenu() {
@@ -32,6 +33,7 @@ export default function DrawerMenu() {
           boxSizing: "border-box",
           backgroundColor: "#0D47A1", // Azul oscuro
           color: "#E5E5E5", // Color de texto claro
+           top: '5px',
         },
       }}
     >

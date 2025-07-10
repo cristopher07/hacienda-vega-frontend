@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Snackbar } from "@mui/material";
 import MainLayout from "../components/layout/MainLayout";
@@ -5,13 +6,14 @@ import { Replay } from "@mui/icons-material";
 import Buscar from "../components/modulesComponents/Buscar";
 import Listar from "../components/modulesComponents/Listar";
 import Confirmation from "../components/modulesComponents/Confirmation";
-import Form from "../components/modulesComponents/Form";
-import { addArea, deleteArea, editArea, getAreas } from "./services/areaService";
-import { useSnackbar } from 'notistack';
 
-export default function Areas() {
-  const [title] = useState("ÁREAS");
-  const [subTitle] = useState(`Gestión de Áreas`);
+import { useSnackbar } from 'notistack';
+import FormInventarios from "./inventariosForms";
+import { addInventario, deleteInventario, editInventario, getInventarioByQuery } from "./services/inventariosServices";
+
+export default function Inventarios() {
+  const [title] = useState("INVENTARIOS");
+  const [subTitle] = useState(`Gestión de Inventarios`);
   const { enqueueSnackbar } = useSnackbar();
   /** Variable para la lógica de visualización del formulariom lista y busqueda */
   const [verForm, setVerForm] = useState(false);
@@ -38,7 +40,7 @@ export default function Areas() {
 
   useEffect(() => {
     // Cargar los datos al iniciar el componente
-    getAreaAll(buscar);
+    getInventariosAll(buscar);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buscar, rowsPerPage, pageFix]);
 
@@ -50,15 +52,15 @@ export default function Areas() {
     });
   };
 
-  const getAreaAll = async (busqueda) => {
-    let objResponse = await getAreas(busqueda, rowsPerPage, pageFix, '');
+  const getInventariosAll = async (busqueda) => {
+    let objResponse = await getInventarioByQuery(busqueda, rowsPerPage, pageFix, '');
     if (objResponse.valid) {
       setData(objResponse.data);
     } else {
       setData([]);
       setAlertMensaje({
         open: true,
-        message: objResponse.message || "No se encontraron áreas.",
+        message: objResponse.message || "No se encontraron inventarios.",
         alertType: "warning",
       });
     }
@@ -70,13 +72,13 @@ export default function Areas() {
    * @param {null} null No tiene Parametros.
    * @public
    */
-  const addAreas = async (obj) => {
-    let objRespuesta = await addArea({
+  const addInventarios = async (obj) => {
+    let objRespuesta = await addInventario({
       ...obj,
     });
     if (objRespuesta.valid) {
-      getAreaAll(buscar);
-      enqueueSnackbar("Se agregó correctamente el área.", {
+      getInventariosAll(buscar);
+      enqueueSnackbar("Se agregó correctamente el inventario.", {
         variant: "success",
         anchorOrigin: {
           vertical: "bottom",
@@ -84,10 +86,10 @@ export default function Areas() {
         },
       });
     } else {
-    enqueueSnackbar(objRespuesta.msg || 'Error al crear el color.', {
-      variant: 'error',
-      anchorOrigin: {
-        vertical: 'bottom',
+      enqueueSnackbar(objRespuesta.msg || 'Error al crear el inventario.', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'bottom',
         horizontal: 'right',
       },
     });
@@ -102,12 +104,12 @@ export default function Areas() {
    * @public
    */
   const edit = async (obj) => {
-    let objRespuesta = await editArea({
+    let objRespuesta = await editInventario({
       ...obj,
     });
     if (objRespuesta.valid) {
-      getAreaAll(buscar);
-      enqueueSnackbar("Se editó correctamente el área.", {
+      getInventariosAll(buscar);
+      enqueueSnackbar("Se editó correctamente el inventario.", {
         variant: "success",
         anchorOrigin: {
           vertical: "bottom",
@@ -115,7 +117,7 @@ export default function Areas() {
         },
       });
     } else {
-      enqueueSnackbar(objRespuesta.msg || 'Error al editar el área.', {
+      enqueueSnackbar(objRespuesta.msg || 'Error al editar el inventario.', {
         variant: 'error',
         anchorOrigin: {
           vertical: 'bottom',
@@ -134,13 +136,13 @@ export default function Areas() {
    * @return {alertMessage} Mensaje de respuesta correcta o error
    * @public
    */
-  const deleteAreas = async (index) => {
-    let objRespuesta = await deleteArea(
-      index.id_area,
+  const deleteInventarios = async (index) => {
+    let objRespuesta = await deleteInventario(
+      index.id_inventario,
     );
     if (objRespuesta.valid) {
-      getAreaAll(buscar);
-      enqueueSnackbar("Se eliminó correctamente el área.", {
+      getInventariosAll(buscar);
+      enqueueSnackbar("Se eliminó correctamente el inventario.", {
         variant: "success",
         anchorOrigin: {
           vertical: "bottom",
@@ -148,7 +150,7 @@ export default function Areas() {
         },
       });
     } else {
-      enqueueSnackbar(objRespuesta.msg || 'Error al eliminar el área.', {
+      enqueueSnackbar(objRespuesta.msg || 'Error al eliminar el inventario.', {
         variant: 'error',
         anchorOrigin: {
           vertical: 'bottom',
@@ -164,12 +166,37 @@ export default function Areas() {
 
     const columns = [
     {
-      id: "id_area",
+      id: "id_inventario",
       label: "ID",
     },
     {
-      id: "nombre",
-      label: "Nombre",
+      id: "producto",
+      label: "Producto",
+    },
+     {
+      id: "categoria",
+      label: "Categoría",
+    },
+      {
+      id: "stock",
+      label: "Stock",
+    }, 
+    {
+      id: "costo",
+      label: "Costo",
+    },
+      {
+      id: "precio_vta",
+      label: "Precio Venta",
+    },
+     {
+      id: "estado",
+      label: "Estado",
+    },
+
+        {
+      id: "nombreArea",
+      label: "Nombre Área",
     },
     {
       id: "actions",
@@ -258,24 +285,25 @@ export default function Areas() {
                     open={openDelete}
                     handleClose={() => setOpenDelete(false)}
                     title={"Advertencia"}
-                    message={`¿Está seguro de eliminar el área?: ${
-                      selectedData ? selectedData.nombre : ""
+                    message={`¿Está seguro de eliminar el Producto?: ${
+                      selectedData ? selectedData.producto : ""
                     }`}
-                    handleOk={() => { deleteAreas(selectedData); setOpenDelete(false); }}
+                    handleOk={() => { deleteInventarios(selectedData); setOpenDelete(false); }}
                   />
             </>
           ) : (
             <>
-              <Form
+              <FormInventarios
               onCancelar={(e) => {
                 setVerForm(e);
                 setSelectedData();
               }}
               fnEditar={edit}
-              fnGuardar={addAreas}
+              fnGuardar={addInventarios}
               data={selectedData}
               setData={setSelectedData}
-              fo/>
+              enqueueSnackbar={enqueueSnackbar}
+              />
                <Snackbar
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 open={alertMessage.open}

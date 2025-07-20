@@ -65,6 +65,7 @@ export default function Inventarios() {
       });
     }
   };
+  console.log(getInventariosAll);
 
     /**
    * AGREGAR LOS COLORES NUEVOS.

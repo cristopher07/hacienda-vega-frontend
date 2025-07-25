@@ -8,7 +8,7 @@ import {
   ListItemText,
   Toolbar,
 } from "@mui/material";
-import {  Domain, Inventory2, Person } from "@mui/icons-material";
+import {  Assignment, Domain, Inventory2, Person } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
 
 const drawerWidth = 240;
@@ -17,6 +17,7 @@ const menuItems = [
   { text: "Áreas", icon: <Domain  />, path: "/areas" },
   { text: "Usuarios", icon: <Person />, path: "/usuarios" },
   { text: "Inventarios", icon: <Inventory2  />, path: "/inventarios" },
+  { text: "Solicitudes", icon: <Assignment />, path: "/solicitudes" }, //nuevo icono como para una solicitud
 ];
 
 export default function DrawerMenu() {

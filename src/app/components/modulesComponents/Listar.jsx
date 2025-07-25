@@ -30,13 +30,18 @@ export default function Listar({
   };
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden", marginTop: "10px" }}>
-      <TableContainer component={Box}>
-        <Table size="small" stickyHeader>
+    <Paper sx={{ width: "100%", overflow: "auto", marginTop: "10px" }}>
+      <TableContainer component={Box} sx={{ overflowX: "auto" }}>
+        <Table
+          size="small"
+          stickyHeader
+        >
           <TableHead>
             <TableRow>
               {columns.map((col) => (
-                <TableCell key={col.id}  sx={{ fontWeight: 'bold' }}>{col.label}</TableCell>
+                <TableCell key={col.id} sx={{ fontWeight: "bold" }}>
+                  {col.label}
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -65,9 +70,7 @@ export default function Listar({
                         </TableCell>
                       );
                     } else {
-                      return (
-                        <TableCell key={col.id}>{row[col.id]}</TableCell>
-                      );
+                      return <TableCell key={col.id}>{row[col.id]}</TableCell>;
                     }
                   })}
                 </TableRow>
@@ -91,10 +94,10 @@ export default function Listar({
         page={pageFix}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-         labelRowsPerPage="Filas por página:"
+        labelRowsPerPage="Filas por página:"
         labelDisplayedRows={({ from, to, count }) =>
-        `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`
-      }
+          `${from}-${to} de ${count !== -1 ? count : `más de ${to}`}`
+        }
       />
     </Paper>
   );

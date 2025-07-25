@@ -13,6 +13,17 @@ export const getUsuarios = async (obj, rowsPerPage, pageFix, pagination) => {
     }
 };
 
+//// LISTAR area selects
+export const listUsuarios = async () => {
+    const urlUsuario = '/usuarios/all';
+    try {
+      let respuesta = await axios.get(URL + urlUsuario + '?paginacion=0');
+      return respuesta.data;
+    } catch (error) {
+      return error;
+    }
+};
+
 export const getUsuarioByQuery = async (obj, rowsPerPage, pageFix, pagination) => {
     try {
        const response = await axios.get(URL+`/usuarios/query?busqueda=${obj}&rowsPerPage=${rowsPerPage}&page=${pageFix}&paginacion=${pagination}`)

@@ -4,7 +4,7 @@ import Areas from "./app/areas/areas";
 import Layout from "./app/layout/layout";
 import Usuarios from "./app/usuarios/usuarios";
 import Inventarios from "./app/inventarios/inventarios";
-import Bebidas from "./app/bebidas/bebidas";
+import Solicitudes from "./app/solicitudes/solicitudes";
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
           <Route path="areas" element={<Areas />} />
           <Route path="usuarios" element={<Usuarios />} />
            <Route path="inventarios" element={<Inventarios />} />
-           <Route path="bebidas" element={<Bebidas />} />
+          <Route path="solicitudes" element={<Solicitudes />} />
 
           {/* <Route path="table" element={<TablePage />} /> */}
         </Route>

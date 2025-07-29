@@ -13,8 +13,9 @@ import {
   MenuItem,
 } from "@mui/material";
 import { listMarca } from "../areas/services/areaService";
+import { listUsuarios } from "../usuarios/services/usuarioService";
 
-export default function FormInventarios({
+export default function FormSolicitudes({
   onCancelar,
   fnGuardar,
   fnEditar,
@@ -22,17 +23,20 @@ export default function FormInventarios({
   titulo = "",
   enqueueSnackbar,
 }) {
+ 
   const [formulario, setFormulario] = useState({
-    producto: "",
-    categoria: "",
-    stock: "",
-    costo: "",
-    precio_vta: "",
-    estado: "",
+    fecha_solicitud: "",
+    id_usuario: "",
     id_area: "",
+    detalle: "",
+    monto: "",
+    documento: "",
+    estado: "",
+    fecha_revision: "",
   });
-
+  console.log("formulario: ", formulario);
   const [areas, setAreas] = useState([]);
+  const [usuario, setUsuario] = useState([]);
   const [observacionLength, setObservacionLength] = useState(
     250 - (typeof data?.producto === "string" ? data.producto.length : 0)
   );
@@ -41,18 +45,21 @@ export default function FormInventarios({
     if (data?.producto) {
       setObservacionLength(250 - data.producto.length);
     }
-    if (data) {
+
+    if (data && data.idArea) {
       setFormulario((prev) => ({
         ...prev,
         ...data,
         id_area: data.idArea,
       }));
     }
+   
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
     getListAreas();
+    getListUsuario();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -71,6 +78,23 @@ export default function FormInventarios({
       });
     }
   };
+
+  const getListUsuario = async () => {
+    // Lógica para obtener la lista de áreas
+    const response = await listUsuarios();
+    if (response.valid) {
+      setUsuario(response.data);
+    } else {
+      enqueueSnackbar("Error al obtener los usuarios.", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -93,12 +117,11 @@ export default function FormInventarios({
       return;
     }
 
-    if (!formulario.producto) return;
 
     if (data) {
-      fnEditar(formulario);
+        fnEditar(formulario);
     } else {
-      fnGuardar(formulario);
+        fnGuardar(formulario);
     }
   };
 
@@ -116,45 +139,42 @@ export default function FormInventarios({
             <TextField
               required
               fullWidth
-              id="producto"
-              name="producto"
-              label={`Producto `}
-              value={formulario.producto}
+              id="fecha_solicitud"
+              name="fecha_solicitud"
+              label={`Fecha de Solicitud `}
+              value={formulario.fecha_solicitud}
               onChange={handleInputChange}
-              placeholder="Producto"
+              placeholder="Fecha de Solicitud"
               variant="outlined"
+              type="date"
+              InputLabelProps={{ shrink: true }}
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              id="categoria"
-              name="categoria"
-              label={`Categoría`}
-              value={formulario.categoria}
-              onChange={handleInputChange}
-              placeholder="Categoría"
-              variant="outlined"
-            />
+             <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="usuario-label">Usuario</InputLabel>
+              <Select
+                labelId="usuario-label"
+                id="id_usuario"
+                name="id_usuario"
+                required
+                value={formulario.id_usuario}
+                placeholder="Seleccione un usuario"
+                onChange={handleInputChange}
+                label="Usuarios"
+                variant="outlined"
+              >
+                {usuario.map((usuario) => (
+                  <MenuItem key={usuario.id_usuario} value={usuario.id_usuario}>
+                    {usuario.nombre}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              id="stock"
-              name="stock"
-              label={`Stock`}
-              value={formulario.stock}
-              onChange={handleInputChange}
-              placeholder="Stock"
-              variant="outlined"
-            />
-          </Grid>
-
-          <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={6}>
             <FormControl fullWidth variant="outlined">
               <InputLabel id="area-label">Áreas</InputLabel>
               <Select
@@ -179,13 +199,29 @@ export default function FormInventarios({
 
           <Grid item xs={12} sm={6}>
             <TextField
+              required
               fullWidth
-              id="precio_vta"
-              name="precio_vta"
-              label={`Precio de Venta `}
-              value={formulario.precio_vta}
+              id="detalle"
+              name="detalle"
+              label={`Detalle`}
+              value={formulario.detalle}
               onChange={handleInputChange}
-              placeholder="Precio de Venta"
+              placeholder="Detalle"
+              variant="outlined"
+            />
+          </Grid>
+
+  
+ 
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              id="monto"
+              name="monto"
+              label={`Monto `}
+              value={formulario.monto}
+              onChange={handleInputChange}
+              placeholder="Monto"
               variant="outlined"
               type="text"
             />
@@ -194,18 +230,18 @@ export default function FormInventarios({
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              id="costo"
-              name="costo"
-              label={`Costo `}
-              value={formulario.costo}
+              id="documento"
+              name="documento"
+              label={`Documento `}
+              value={formulario.documento}
               onChange={handleInputChange}
-              placeholder="Costo"
+              placeholder="Documento"
               variant="outlined"
               type="text"
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={6}>
             <FormControl fullWidth variant="outlined">
               <InputLabel id="estado-label">Estado</InputLabel>
               <Select
@@ -219,10 +255,27 @@ export default function FormInventarios({
                 label="Estado"
                 variant="outlined"
               >
-                <MenuItem value={1}>Activo</MenuItem>
-                <MenuItem value={0}>Inactivo</MenuItem>
+                <MenuItem value={'Aprobada'}>Aprobada</MenuItem>
+                <MenuItem value={'Rechazada'}>Rechazada</MenuItem>
+                <MenuItem value={'Pendiente'}>Pendiente</MenuItem>
               </Select>
             </FormControl>
+          </Grid>
+
+            <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              fullWidth
+              id="fecha_revision"
+              name="fecha_revision"
+              label={`Fecha de Revisión `}
+              value={formulario.fecha_revision}
+              onChange={handleInputChange}
+              placeholder="Fecha de Revisión"
+              variant="outlined"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+            />
           </Grid>
         </Grid>
       </Paper>

@@ -1,13 +1,6 @@
 import React from "react";
-import {
-  Box,
-  Drawer,
-  Typography,
-  Hidden,
-  useTheme
-} from "@mui/material";
+import { Box, Drawer, Typography, Hidden, useTheme } from "@mui/material";
 import Breadcrumbs from "@mui/material/Breadcrumbs"; // O usa tu propio Breadcrumb
-import clsx from "clsx";
 
 /**
  * MainLayout adaptable para módulos internos.
@@ -33,7 +26,7 @@ export default function MainLayout({
   metasidebar,
   breadcrumb,
   disabledContent,
-  className
+  className,
 }) {
   const theme = useTheme();
 
@@ -50,11 +43,12 @@ export default function MainLayout({
         <Hidden mdDown>
           <Box
             sx={{
-              flex: "none",
-              width: "250px",
-              p: 2,
               borderRight: `1px solid ${theme.palette.divider}`,
-              boxSizing: "border-box",
+              mt: 2,
+              width: "100%",
+              maxWidth: "100%",
+              overflowX: "auto",
+              WebkitOverflowScrolling: "touch",
               opacity: disabledContent ? 0.5 : 1,
               pointerEvents: disabledContent ? "none" : "auto",
             }}
@@ -77,45 +71,66 @@ export default function MainLayout({
         {breadcrumb && (
           <Breadcrumbs sx={{ mb: 2 }}>
             {breadcrumb.map((b, idx) => (
-              <Typography key={idx} color="inherit">{b.label}</Typography>
+              <Typography key={idx} color="inherit">
+                {b.label}
+              </Typography>
             ))}
           </Breadcrumbs>
         )}
 
         {/* Title + Meta */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+          }}
+        >
           <Typography variant="h5" color="primary" sx={{ fontWeight: "bold" }}>
             {title}
           </Typography>
 
-          {meta && (
-            <Box sx={{ mt: { xs: 2, sm: 0 } }}>
-              {meta}
-            </Box>
-          )}
+          {meta && <Box sx={{ mt: { xs: 2, sm: 0 } }}>{meta}</Box>}
         </Box>
 
         {/* Subtitle */}
         {(subtitle || subtitleItemsLeft || subtitleItemsRight) && (
           <Box sx={{ mt: 1 }}>
             {subtitle && (
-              <Typography variant="body1" color="textSecondary" >
+              <Typography variant="body1" color="textSecondary">
                 {subtitle}
               </Typography>
             )}
 
             {(subtitleItemsLeft || subtitleItemsRight) && (
-              <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", mt: 1 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  mt: 1,
+                }}
+              >
                 <Box>
                   {subtitleItemsLeft?.map((item, idx) => (
-                    <Typography key={idx} sx={{ mr: 2 }} variant="subtitle2" component="span">
+                    <Typography
+                      key={idx}
+                      sx={{ mr: 2 }}
+                      variant="subtitle2"
+                      component="span"
+                    >
                       {item.title}: <strong>{item.text}</strong>
                     </Typography>
                   ))}
                 </Box>
                 <Box>
                   {subtitleItemsRight?.map((item, idx) => (
-                    <Typography key={idx} sx={{ ml: 2 }} variant="subtitle2" component="span">
+                    <Typography
+                      key={idx}
+                      sx={{ ml: 2 }}
+                      variant="subtitle2"
+                      component="span"
+                    >
                       {item.title}: <strong>{item.text}</strong>
                     </Typography>
                   ))}

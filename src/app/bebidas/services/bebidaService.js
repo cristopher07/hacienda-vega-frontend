@@ -5,19 +5,11 @@ const URL = process.env.REACT_APP_BACKEND_BASE;
 
 export const getBebidas = async (obj, rowsPerPage, pageFix, pagination = 1) => {
     try {
-        const response = await axios.get(
-            `${URL}/bebidas/all?busqueda=${obj}&rowsPerPage=${rowsPerPage}&page=${pageFix}&paginacion=${pagination}`
-        );
-        return {
-            valid: true,
-            data: response.data,
-        };
+       const response = await axios.get(URL+`/bebidas/all?busqueda=${obj}&rowsPerPage=${rowsPerPage}&page=${pageFix}&paginacion=${pagination}`)
+        return response.data;
     } catch (error) {
         console.error("Error fetching bebidas:", error);
-        return {
-            valid: false,
-            message: "Error al obtener las bebidas.",
-        };
+        throw error;
     }
 };
 
@@ -32,6 +24,16 @@ export const listMarca = async () => {
     }
 };
 
+export const getBebidaByQuery = async (obj, rowsPerPage, pageFix, pagination) => {
+    try {
+       const response = await axios.get(URL+`/bebidas/query?busqueda=${obj}&rowsPerPage=${rowsPerPage}&page=${pageFix}&paginacion=${pagination}`)
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching bebidas:", error);
+        throw error;
+    }
+};
+
 export const addBebida = async (obj) => {
     try {
         const response = await axios.post(URL + '/bebidas/add', obj);
@@ -43,7 +45,7 @@ export const addBebida = async (obj) => {
 
 export const editBebida = async (obj) => {
     try {
-        const response = await axios.post(URL + `/bebidasUpdate/${obj.id_bebida}`, obj);
+        const response = await axios.post(URL + `/bebidas/Update/${obj.id_bebida}`, obj);
         return response.data;
     } catch (error) {
         console.error("Error editing bebida:", error);
@@ -56,7 +58,7 @@ export const deleteBebida = async (id) => {
         let obj = {
             id_bebida: id
         };
-        const response = await axios.post(URL +  `bebidasDelete/${id}`,obj);
+        const response = await axios.post(URL +  `/bebidas/Delete/${id}`,obj);
         return response.data;
     } catch (error) {
         console.error("Error deleting bebida:", error);

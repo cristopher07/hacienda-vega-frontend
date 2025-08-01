@@ -7,13 +7,13 @@ import { Replay } from "@mui/icons-material";
 import Buscar from "../components/modulesComponents/Buscar";
 import Listar from "../components/modulesComponents/Listar";
 import Confirmation from "../components/modulesComponents/Confirmation";
-import FormBebidas from "./bebidaForm";
-import { addBebida, deleteBebida, editBebida, getBebidaByQuery } from "./services/bebidaService";
+import FormMesas from "./mesaForm";
+import { addMesa, deleteMesa, editMesa, getMesaByQuery } from "./services/mesaService";
 import { useSnackbar } from 'notistack';
 
 export default function Bebidas() {
-  const [title] = useState("BEBIDAS");
-  const [subTitle] = useState(`Gestión de Bebidas`);
+  const [title] = useState("MESAS");
+  const [subTitle] = useState(`Gestión de Mesas`);
   const { enqueueSnackbar } = useSnackbar();
   const [verForm, setVerForm] = useState(false);
   const [data, setData] = useState([]);
@@ -25,41 +25,36 @@ export default function Bebidas() {
   const [openDelete, setOpenDelete] = useState(false);
 
   useEffect(() => {
-    cargarBebidas(buscar);
+    cargarMesas(buscar);
   }, [buscar, rowsPerPage, pageFix]);
 
-  const cargarBebidas = async (busqueda) => {
-    let objResponse = await getBebidaByQuery(busqueda, rowsPerPage, pageFix, '');
+  const cargarMesas = async (busqueda) => {
+    let objResponse = await getMesaByQuery(busqueda, rowsPerPage, pageFix, '');
         if (objResponse.valid) {
           setData(objResponse.data);
         } else {
           setData([]);
           setAlertMensaje({
             open: true,
-            message: objResponse.message || "No se encontraron bebidas.",
+            message: objResponse.message || "No se encontraron mesas.",
             alertType: "warning",
           });
         }
   };
 
-  const addBebidas = async (obj) => {
-    const res = await addBebida(obj);
-    if (res.valid) {
-      enqueueSnackbar("Se agregó correctamente la bebida.", { variant: "success" });
-      cargarBebidas(buscar);
-      setVerForm(false);
-    } else {
-      enqueueSnackbar(res.message || "Error al crear bebida.", { variant: "error" });
-    }
-  };
-
-  const edit = async (obj) => {
-      let objRespuesta = await editBebida({
+    /**
+     * AGREGAR LOS COLORES NUEVOS.
+     *
+     * @param {null} null No tiene Parametros.
+     * @public
+     */
+    const addMesas = async (obj) => {
+      let objRespuesta = await addMesa({
         ...obj,
       });
       if (objRespuesta.valid) {
-        cargarBebidas(buscar);
-        enqueueSnackbar("Se editó correctamente la bebida.", {
+        cargarMesas(buscar);
+        enqueueSnackbar("Se agregó correctamente la mesa.", {
           variant: "success",
           anchorOrigin: {
             vertical: "bottom",
@@ -67,7 +62,33 @@ export default function Bebidas() {
           },
         });
       } else {
-        enqueueSnackbar(objRespuesta.msg || 'Error al editar la bebida.', {
+      enqueueSnackbar(objRespuesta.msg || 'Error al crear la mesa.', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'right',
+        },
+      });
+    }
+      setVerForm(false);
+    };
+    
+
+  const edit = async (obj) => {
+      let objRespuesta = await editMesa({
+        ...obj,
+      });
+      if (objRespuesta.valid) {
+        cargarMesas(buscar);
+        enqueueSnackbar("Se editó correctamente la mesa.", {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "right",
+          },
+        });
+      } else {
+        enqueueSnackbar(objRespuesta.msg || 'Error al editar la mesa.', {
           variant: 'error',
           anchorOrigin: {
             vertical: 'bottom',
@@ -98,13 +119,13 @@ export default function Bebidas() {
      * @return {alertMessage} Mensaje de respuesta correcta o error
      * @public
      */
-    const deleteBebidas = async (index) => {
-      let objRespuesta = await deleteBebida(
-        index.id_bebida,
+    const deleteMesas = async (index) => {
+      let objRespuesta = await deleteMesa(
+        index.id_mesa,
       );
       if (objRespuesta.valid) {
-        cargarBebidas(buscar);
-        enqueueSnackbar("Se eliminó correctamente la bebida.", {
+        cargarMesas(buscar);
+        enqueueSnackbar("Se eliminó correctamente la mesa.", {
           variant: "success",
           anchorOrigin: {
             vertical: "bottom",
@@ -112,7 +133,7 @@ export default function Bebidas() {
           },
         });
       } else {
-        enqueueSnackbar(objRespuesta.msg || 'Error al eliminar la bebida.', {
+        enqueueSnackbar(objRespuesta.msg || 'Error al eliminar la mesa.', {
           variant: 'error',
           anchorOrigin: {
             vertical: 'bottom',
@@ -126,10 +147,9 @@ export default function Bebidas() {
   
 
   const columns = [
-    { id: "id_bebida", label: "ID" },
-    { id: "tipo_bebida", label: "Tipo de Bebida" },
-    { id: "descripcion", label: "Descripción" },
-    { id: "precio", label: "Precio" },
+    { id: "id_mesa", label: "ID" },
+    { id: "tipo_de_mesa", label: "Tipo de Mesa" },
+    { id: "capacidad", label: "Capacidad" },
     {
       id: "actions",
       label: "Acciones",
@@ -195,18 +215,18 @@ export default function Bebidas() {
                                   open={openDelete}
                                   handleClose={() => setOpenDelete(false)}
                                   title={"Advertencia"}
-                                  message={`¿Está seguro de eliminar la bebida?: ${
-                                    selectedData ? selectedData.descripcion : ""
+                                  message={`¿Está seguro de eliminar la mesa?: ${
+                                    selectedData ? selectedData.tipo_de_mesa : ""
                                   }`}
-                                  handleOk={() => { deleteBebidas(selectedData); setOpenDelete(false); }}
+                                  handleOk={() => { deleteMesas(selectedData); setOpenDelete(false); }}
                                 />
             </>
           ) : (
             <>
-              <FormBebidas
+              <FormMesas
                 onCancelar={() => { setVerForm(false); setSelectedData(null); }}
                 fnEditar={edit}
-                fnGuardar={addBebidas}
+                fnGuardar={addMesas}
                 data={selectedData}
                 setData={setSelectedData}
               />

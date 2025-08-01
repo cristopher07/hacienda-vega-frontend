@@ -7,13 +7,13 @@ import { Replay } from "@mui/icons-material";
 import Buscar from "../components/modulesComponents/Buscar";
 import Listar from "../components/modulesComponents/Listar";
 import Confirmation from "../components/modulesComponents/Confirmation";
-import FormBebidas from "./bebidaForm";
-import { addBebida, deleteBebida, editBebida, getBebidaByQuery } from "./services/bebidaService";
+import FormHabitaciones from "./habitacionForm";
+import { addHabitacion, deleteHabitacion, editHabitacion, getHabitacionByQuery } from "./services/habitacionService";
 import { useSnackbar } from 'notistack';
 
-export default function Bebidas() {
-  const [title] = useState("BEBIDAS");
-  const [subTitle] = useState(`Gestión de Bebidas`);
+export default function Habitaciones() {
+  const [title] = useState("HABITACIONES");
+  const [subTitle] = useState(`Gestión de Habitaciones`);
   const { enqueueSnackbar } = useSnackbar();
   const [verForm, setVerForm] = useState(false);
   const [data, setData] = useState([]);
@@ -25,41 +25,36 @@ export default function Bebidas() {
   const [openDelete, setOpenDelete] = useState(false);
 
   useEffect(() => {
-    cargarBebidas(buscar);
+    cargarHabitaciones(buscar);
   }, [buscar, rowsPerPage, pageFix]);
 
-  const cargarBebidas = async (busqueda) => {
-    let objResponse = await getBebidaByQuery(busqueda, rowsPerPage, pageFix, '');
+  const cargarHabitaciones = async (busqueda) => {
+    let objResponse = await getHabitacionByQuery(busqueda, rowsPerPage, pageFix, '');
         if (objResponse.valid) {
           setData(objResponse.data);
         } else {
           setData([]);
           setAlertMensaje({
             open: true,
-            message: objResponse.message || "No se encontraron bebidas.",
+            message: objResponse.message || "No se encontraron habitaciones.",
             alertType: "warning",
           });
         }
   };
 
-  const addBebidas = async (obj) => {
-    const res = await addBebida(obj);
-    if (res.valid) {
-      enqueueSnackbar("Se agregó correctamente la bebida.", { variant: "success" });
-      cargarBebidas(buscar);
-      setVerForm(false);
-    } else {
-      enqueueSnackbar(res.message || "Error al crear bebida.", { variant: "error" });
-    }
-  };
-
-  const edit = async (obj) => {
-      let objRespuesta = await editBebida({
+    /**
+     * AGREGAR LOS COLORES NUEVOS.
+     *
+     * @param {null} null No tiene Parametros.
+     * @public
+     */
+    const addHabitaciones = async (obj) => {
+      let objRespuesta = await addHabitacion({
         ...obj,
       });
       if (objRespuesta.valid) {
-        cargarBebidas(buscar);
-        enqueueSnackbar("Se editó correctamente la bebida.", {
+        cargarHabitaciones(buscar);
+        enqueueSnackbar("Se agregó correctamente la habitación.", {
           variant: "success",
           anchorOrigin: {
             vertical: "bottom",
@@ -67,7 +62,33 @@ export default function Bebidas() {
           },
         });
       } else {
-        enqueueSnackbar(objRespuesta.msg || 'Error al editar la bebida.', {
+      enqueueSnackbar(objRespuesta.msg || 'Error al crear la habitación.', {
+        variant: 'error',
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'right',
+        },
+      });
+    }
+      setVerForm(false);
+    };
+    
+
+  const edit = async (obj) => {
+      let objRespuesta = await editHabitacion({
+        ...obj,
+      });
+      if (objRespuesta.valid) {
+        cargarHabitaciones(buscar);
+        enqueueSnackbar("Se editó correctamente la habitación.", {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "right",
+          },
+        });
+      } else {
+        enqueueSnackbar(objRespuesta.msg || 'Error al editar la habitación.', {
           variant: 'error',
           anchorOrigin: {
             vertical: 'bottom',
@@ -98,13 +119,13 @@ export default function Bebidas() {
      * @return {alertMessage} Mensaje de respuesta correcta o error
      * @public
      */
-    const deleteBebidas = async (index) => {
-      let objRespuesta = await deleteBebida(
-        index.id_bebida,
+    const deleteHabitaciones = async (index) => {
+      let objRespuesta = await deleteHabitacion(
+        index.id_habitacion,
       );
       if (objRespuesta.valid) {
-        cargarBebidas(buscar);
-        enqueueSnackbar("Se eliminó correctamente la bebida.", {
+        cargarHabitaciones(buscar);
+        enqueueSnackbar("Se eliminó correctamente la habitación.", {
           variant: "success",
           anchorOrigin: {
             vertical: "bottom",
@@ -112,7 +133,7 @@ export default function Bebidas() {
           },
         });
       } else {
-        enqueueSnackbar(objRespuesta.msg || 'Error al eliminar la bebida.', {
+        enqueueSnackbar(objRespuesta.msg || 'Error al eliminar la habitación.', {
           variant: 'error',
           anchorOrigin: {
             vertical: 'bottom',
@@ -126,9 +147,10 @@ export default function Bebidas() {
   
 
   const columns = [
-    { id: "id_bebida", label: "ID" },
-    { id: "tipo_bebida", label: "Tipo de Bebida" },
-    { id: "descripcion", label: "Descripción" },
+    { id: "id_habitacion", label: "ID" },
+    { id: "tipo_habitacion", label: "Tipo de Habitación" },
+    { id: "numero_habitacion", label: "# de Habitación" },
+    { id: "huespedes", label: "Cantidad de Huespedes" },
     { id: "precio", label: "Precio" },
     {
       id: "actions",
@@ -195,18 +217,18 @@ export default function Bebidas() {
                                   open={openDelete}
                                   handleClose={() => setOpenDelete(false)}
                                   title={"Advertencia"}
-                                  message={`¿Está seguro de eliminar la bebida?: ${
-                                    selectedData ? selectedData.descripcion : ""
+                                  message={`¿Está seguro de eliminar la habitación?: Habitación # ${
+                                    selectedData ? selectedData.numero_habitacion : ""
                                   }`}
-                                  handleOk={() => { deleteBebidas(selectedData); setOpenDelete(false); }}
+                                  handleOk={() => { deleteHabitaciones(selectedData); setOpenDelete(false); }}
                                 />
             </>
           ) : (
             <>
-              <FormBebidas
+              <FormHabitaciones
                 onCancelar={() => { setVerForm(false); setSelectedData(null); }}
                 fnEditar={edit}
-                fnGuardar={addBebidas}
+                fnGuardar={addHabitaciones}
                 data={selectedData}
                 setData={setSelectedData}
               />

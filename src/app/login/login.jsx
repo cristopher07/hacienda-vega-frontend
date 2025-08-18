@@ -5,15 +5,13 @@ import {
   TextField,
   Button,
   Typography,
-  Checkbox,
-  FormControlLabel,
-  IconButton,
   Alert,
   Grid,
   Container
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { loginUser } from "./services/authService";
+import { useNavigate } from "react-router-dom";
 
 // Componentes estilizados usando Material-UI
 const LoginContainer = styled(Container)(({ theme }) => ({
@@ -83,6 +81,7 @@ const RightPanel = styled(Box)(({ theme }) => ({
 
 
 export default function LoginView() {
+  const navigate = useNavigate();
   const [usuario, setUsuario] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -104,7 +103,7 @@ export default function LoginView() {
       
       // Si el login es exitoso, redirigir a la página principal
       // Puedes cambiar esta ruta según necesites
-      window.location.href = "/app/areas";
+      navigate("/app/areas");
       
     } catch (err) {
       // Manejar diferentes tipos de errores del backend

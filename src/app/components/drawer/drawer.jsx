@@ -14,14 +14,14 @@ import { Link, useLocation } from "react-router-dom";
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: "Áreas", icon: <Domain  />, path: "/areas" },
-  { text: "Usuarios", icon: <Person />, path: "/usuarios" },
-  { text: "Inventarios", icon: <Inventory2  />, path: "/inventarios" },
-  { text: "Solicitudes", icon: <Assignment />, path: "/solicitudes" }, //nuevo icono como para una solicitud
-  { text: "Bebidas", icon: <Liquor />, path: "/bebidas" },
-  { text: "Mesas", icon: <TableBar/>, path: "/mesas"},
-  { text: "Menús", icon: <Fastfood/>, path: "/menus"},
-  { text: "Habitaciones", icon: <RoomService/>, path: "/habitaciones"},
+  { text: "Áreas", icon: <Domain  />, path: "/app/areas" },
+  { text: "Usuarios", icon: <Person />, path: "/app/usuarios" },
+  { text: "Inventarios", icon: <Inventory2  />, path: "/app/inventarios" },
+  { text: "Solicitudes", icon: <Assignment />, path: "/app/solicitudes" }, //nuevo icono como para una solicitud
+  { text: "Bebidas", icon: <Liquor />, path: "/app/bebidas" },
+  { text: "Mesas", icon: <TableBar/>, path: "/app/mesas"},
+  { text: "Menús", icon: <Fastfood/>, path: "/app/menus"},
+  { text: "Habitaciones", icon: <RoomService/>, path: "/app/habitaciones"},
 ];
 
 export default function DrawerMenu() {

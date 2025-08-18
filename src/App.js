@@ -6,6 +6,10 @@ import Usuarios from "./app/usuarios/usuarios";
 import Inventarios from "./app/inventarios/inventarios";
 import Solicitudes from "./app/solicitudes/solicitudes";
 import LoginView from "./app/login/login";
+import Bebidas from "./app/bebidas/bebidas";
+import Mesas from "./app/mesas/mesas";
+import Habitaciones from "./app/habitaciones/habitaciones";
+import Menus from "./app/menus/menus";
 
 function App() {
   return (
@@ -21,7 +25,10 @@ function App() {
           <Route path="usuarios" element={<Usuarios />} />
           <Route path="inventarios" element={<Inventarios />} />
           <Route path="solicitudes" element={<Solicitudes />} />
-         
+          <Route path="bebidas" element={<Bebidas />} />
+          <Route path="mesas" element={<Mesas />} />
+          <Route path="menus" element={<Menus />} />
+          <Route path="habitaciones" element={<Habitaciones />} />
           {/* <Route path="table" element={<TablePage />} /> */}
         </Route>
       </Routes>

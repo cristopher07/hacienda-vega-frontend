@@ -1,4 +1,4 @@
-// src/pages/Bebidas.jsx
+// src/pages/Menus.jsx
 
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Snackbar } from "@mui/material";
@@ -11,7 +11,7 @@ import FormMenus from "./menuForm";
 import { addMenu, deleteMenu, editMenu, getMenuByQuery } from "./services/menuService";
 import { useSnackbar } from 'notistack';
 
-export default function Bebidas() {
+export default function Menus() {
   const [title] = useState("MENÚS");
   const [subTitle] = useState(`Gestión de Menús`);
   const { enqueueSnackbar } = useSnackbar();

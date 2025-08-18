@@ -7,6 +7,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { AccountCircle, Settings, Logout } from "@mui/icons-material";
+import {logoutUser} from '../../login/services/authService';
 
 export default function UserMenu() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -19,6 +20,11 @@ const handleClick = (event) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const logoutUserMenu = () => {
+    logoutUser();
+    window.location.href = '/login'; // Redirigir al login después de cerrar sesión
+  }
 
   return (
     <>
@@ -60,7 +66,7 @@ const handleClick = (event) => {
           <ListItemText>Settings</ListItemText>
         </MenuItem>
 
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={logoutUserMenu}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>

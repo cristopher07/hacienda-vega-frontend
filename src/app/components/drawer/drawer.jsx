@@ -36,8 +36,8 @@ export default function DrawerMenu() {
         [`& .MuiDrawer-paper`]: {
           width: drawerWidth,
           boxSizing: "border-box",
-          backgroundColor: "#0D47A1", // Azul oscuro
-          color: "#E5E5E5", // Color de texto claro
+          backgroundColor: "#0D47A1", 
+          color: "#E5E5E5",
            top: '5px',
         },
       }}

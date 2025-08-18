@@ -7,8 +7,11 @@ import {
   ListItemText,
 } from "@mui/material";
 import { AccountCircle, Settings, Logout } from "@mui/icons-material";
+import {logoutUser} from '../../login/services/authService';
+import { useNavigate } from "react-router-dom";
 
 export default function UserMenu() {
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 const handleClick = (event) => {
@@ -19,6 +22,11 @@ const handleClick = (event) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const logoutUserMenu = () => {
+    logoutUser();
+    navigate('/login');
+  }
 
   return (
     <>
@@ -46,7 +54,7 @@ const handleClick = (event) => {
           },
         }}
       >
-        <MenuItem onClick={handleClose}>
+        {/* <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <AccountCircle fontSize="small" />
           </ListItemIcon>
@@ -58,13 +66,13 @@ const handleClick = (event) => {
             <Settings fontSize="small" />
           </ListItemIcon>
           <ListItemText>Settings</ListItemText>
-        </MenuItem>
+        </MenuItem> */}
 
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={logoutUserMenu}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Logout</ListItemText>
+          <ListItemText>Cerrar Sesión</ListItemText>
         </MenuItem>
       </Menu>
     </>

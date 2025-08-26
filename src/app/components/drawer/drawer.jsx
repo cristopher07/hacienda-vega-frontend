@@ -8,7 +8,7 @@ import {
   ListItemText,
   Toolbar,
 } from "@mui/material";
-import {  Assignment, Domain, Inventory2, Person, Liquor, TableBar, Fastfood, RoomService } from "@mui/icons-material";
+import {  Assignment, Domain, Inventory2, Person, Liquor, TableBar, Fastfood, RoomService, AttachMoney } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
 
 const drawerWidth = 240;
@@ -22,6 +22,7 @@ const menuItems = [
   { text: "Mesas", icon: <TableBar/>, path: "/app/mesas"},
   { text: "Menús", icon: <Fastfood/>, path: "/app/menus"},
   { text: "Habitaciones", icon: <RoomService/>, path: "/app/habitaciones"},
+  { text: "Ingresos", icon: <AttachMoney/>, path: "/app/ingresos"},
 ];
 
 export default function DrawerMenu() {

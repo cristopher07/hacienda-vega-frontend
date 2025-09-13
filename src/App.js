@@ -10,11 +10,8 @@ import Bebidas from "./app/bebidas/bebidas";
 import Mesas from "./app/mesas/mesas";
 import Habitaciones from "./app/habitaciones/habitaciones";
 import Menus from "./app/menus/menus";
-<<<<<<< HEAD
 import Ingresos from "./app/Ingresos/ingresos";
-=======
 import Brazaletes from "./app/brazaletes/brazaletes";
->>>>>>> feature/dev-nestor
 
 function App() {
   return (
@@ -34,11 +31,8 @@ function App() {
           <Route path="mesas" element={<Mesas />} />
           <Route path="menus" element={<Menus />} />
           <Route path="habitaciones" element={<Habitaciones />} />
-<<<<<<< HEAD
-          <Route path="ingresos" element={<Ingresos />} />
-=======
+          <Route path="ingresos" element={<Ingresos/>} />
           <Route path="brazaletes" element={<Brazaletes />} />
->>>>>>> feature/dev-nestor
           {/* <Route path="table" element={<TablePage />} /> */}
         </Route>
       </Routes>

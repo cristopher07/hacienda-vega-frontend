@@ -10,6 +10,7 @@ import Bebidas from "./app/bebidas/bebidas";
 import Mesas from "./app/mesas/mesas";
 import Habitaciones from "./app/habitaciones/habitaciones";
 import Menus from "./app/menus/menus";
+import Brazaletes from "./app/brazaletes/brazaletes";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="mesas" element={<Mesas />} />
           <Route path="menus" element={<Menus />} />
           <Route path="habitaciones" element={<Habitaciones />} />
+          <Route path="brazaletes" element={<Brazaletes />} />
           {/* <Route path="table" element={<TablePage />} /> */}
         </Route>
       </Routes>

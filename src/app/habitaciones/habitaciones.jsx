@@ -8,8 +8,13 @@ import Buscar from "../components/modulesComponents/Buscar";
 import Listar from "../components/modulesComponents/Listar";
 import Confirmation from "../components/modulesComponents/Confirmation";
 import FormHabitaciones from "./habitacionForm";
-import { addHabitacion, deleteHabitacion, editHabitacion, getHabitacionByQuery } from "./services/habitacionService";
-import { useSnackbar } from 'notistack';
+import {
+  addHabitacion,
+  deleteHabitacion,
+  editHabitacion,
+  getHabitacionByQuery,
+} from "./services/habitacionService";
+import { useSnackbar } from "notistack";
 
 export default function Habitaciones() {
   const [title] = useState("HABITACIONES");
@@ -21,7 +26,11 @@ export default function Habitaciones() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [pageFix, setpageFix] = useState(0);
   const [buscar, setBuscar] = useState("");
-  const [alertMessage, setAlertMensaje] = useState({ open: false, message: "", alertType: "info" });
+  const [alertMessage, setAlertMensaje] = useState({
+    open: false,
+    message: "",
+    alertType: "info",
+  });
   const [openDelete, setOpenDelete] = useState(false);
 
   useEffect(() => {
@@ -29,76 +38,80 @@ export default function Habitaciones() {
   }, [buscar, rowsPerPage, pageFix]);
 
   const cargarHabitaciones = async (busqueda) => {
-    let objResponse = await getHabitacionByQuery(busqueda, rowsPerPage, pageFix, '');
-        if (objResponse.valid) {
-          setData(objResponse.data);
-        } else {
-          setData([]);
-          setAlertMensaje({
-            open: true,
-            message: objResponse.message || "No se encontraron habitaciones.",
-            alertType: "warning",
-          });
-        }
+    let objResponse = await getHabitacionByQuery(
+      busqueda,
+      rowsPerPage,
+      pageFix,
+      ""
+    );
+    if (objResponse.valid) {
+      setData(objResponse.data);
+    } else {
+      setData([]);
+      setAlertMensaje({
+        open: true,
+        message: objResponse.message || "No se encontraron habitaciones.",
+        alertType: "warning",
+      });
+    }
   };
 
-    /**
-     * AGREGAR LOS COLORES NUEVOS.
-     *
-     * @param {null} null No tiene Parametros.
-     * @public
-     */
-    const addHabitaciones = async (obj) => {
-      let objRespuesta = await addHabitacion({
-        ...obj,
-      });
-      if (objRespuesta.valid) {
-        cargarHabitaciones(buscar);
-        enqueueSnackbar("Se agregó correctamente la habitación.", {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "right",
-          },
-        });
-      } else {
-      enqueueSnackbar(objRespuesta.msg || 'Error al crear la habitación.', {
-        variant: 'error',
+  /**
+   * AGREGAR LOS COLORES NUEVOS.
+   *
+   * @param {null} null No tiene Parametros.
+   * @public
+   */
+  const addHabitaciones = async (obj) => {
+    let objRespuesta = await addHabitacion({
+      ...obj,
+    });
+    if (objRespuesta.valid) {
+      cargarHabitaciones(buscar);
+      enqueueSnackbar("Se agregó correctamente la habitación.", {
+        variant: "success",
         anchorOrigin: {
-          vertical: 'bottom',
-          horizontal: 'right',
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    } else {
+      enqueueSnackbar(objRespuesta.msg || "Error al crear la habitación.", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
         },
       });
     }
-      setVerForm(false);
-    };
-    
+    setVerForm(false);
+  };
 
   const edit = async (obj) => {
-      let objRespuesta = await editHabitacion({
-        ...obj,
+    let objRespuesta = await editHabitacion({
+      ...obj,
+    });
+    if (objRespuesta.valid) {
+      cargarHabitaciones(buscar);
+      enqueueSnackbar("Se editó correctamente la habitación.", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
       });
-      if (objRespuesta.valid) {
-        cargarHabitaciones(buscar);
-        enqueueSnackbar("Se editó correctamente la habitación.", {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "right",
-          },
-        });
-      } else {
-        enqueueSnackbar(objRespuesta.msg || 'Error al editar la habitación.', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'right',
-          },
-        });
-      }
-      setVerForm(false);
-      setSelectedData();
-    };
+    } else {
+      enqueueSnackbar(objRespuesta.msg || "Error al editar la habitación.", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    }
+    setVerForm(false);
+    setSelectedData();
+  };
 
   /*const deleteBebidas = async (obj) => {
     const res = await deleteBebida(obj.id_bebida);
@@ -113,38 +126,35 @@ export default function Habitaciones() {
   };*/
 
   /**
-     * ELIMINA EL COLOR SEGUN VALIDACIONES REALIZADAS.
-     *
-     * @param {int} index Id del período a eliminar
-     * @return {alertMessage} Mensaje de respuesta correcta o error
-     * @public
-     */
-    const deleteHabitaciones = async (index) => {
-      let objRespuesta = await deleteHabitacion(
-        index.id_habitacion,
-      );
-      if (objRespuesta.valid) {
-        cargarHabitaciones(buscar);
-        enqueueSnackbar("Se eliminó correctamente la habitación.", {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "right",
-          },
-        });
-      } else {
-        enqueueSnackbar(objRespuesta.msg || 'Error al eliminar la habitación.', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'right',
-          },
-        });
-      }
-      setVerForm(false);
-      setSelectedData();
-    };
-  
+   * ELIMINA EL COLOR SEGUN VALIDACIONES REALIZADAS.
+   *
+   * @param {int} index Id del período a eliminar
+   * @return {alertMessage} Mensaje de respuesta correcta o error
+   * @public
+   */
+  const deleteHabitaciones = async (index) => {
+    let objRespuesta = await deleteHabitacion(index.id_habitacion);
+    if (objRespuesta.valid) {
+      cargarHabitaciones(buscar);
+      enqueueSnackbar("Se eliminó correctamente la habitación.", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    } else {
+      enqueueSnackbar(objRespuesta.msg || "Error al eliminar la habitación.", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    }
+    setVerForm(false);
+    setSelectedData();
+  };
 
   const columns = [
     { id: "id_habitacion", label: "ID" },
@@ -181,16 +191,27 @@ export default function Habitaciones() {
   ];
 
   return (
-    <MainLayout title={title} subtitle={subTitle}
-      meta={verForm && (
-        <div>
-          <Button variant="contained" color="primary" type="button"
-            onClick={() => { setVerForm(false); setSelectedData(null); }}
-            startIcon={<Replay />}>
-            REGRESAR
-          </Button>
-        </div>
-      )}
+    <MainLayout
+      title={title}
+      subtitle={subTitle}
+      meta={
+        verForm && (
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              type="button"
+              onClick={() => {
+                setVerForm(false);
+                setSelectedData(null);
+              }}
+              startIcon={<Replay />}
+            >
+              REGRESAR
+            </Button>
+          </div>
+        )
+      }
       metacontent={
         <>
           {!verForm ? (
@@ -209,37 +230,57 @@ export default function Habitaciones() {
                 count={data[0]?.count || 0}
                 pageFix={pageFix}
                 setpageFix={setpageFix}
-                onEdit={(row) => { setSelectedData(row); setVerForm(true); }}
-                onDelete={(row) => { setSelectedData(row); setOpenDelete(true); }}
+                onEdit={(row) => {
+                  setSelectedData(row);
+                  setVerForm(true);
+                }}
+                onDelete={(row) => {
+                  setSelectedData(row);
+                  setOpenDelete(true);
+                }}
               />
-              
+
               <Confirmation
-                                  open={openDelete}
-                                  handleClose={() => setOpenDelete(false)}
-                                  title={"Advertencia"}
-                                  message={`¿Está seguro de eliminar la habitación?: Habitación # ${
-                                    selectedData ? selectedData.numero_habitacion : ""
-                                  }`}
-                                  handleOk={() => { deleteHabitaciones(selectedData); setOpenDelete(false); }}
-                                />
+                open={openDelete}
+                handleClose={() => setOpenDelete(false)}
+                title={"Advertencia"}
+                message={`¿Está seguro de eliminar la habitación?: Habitación # ${
+                  selectedData ? selectedData.numero_habitacion : ""
+                }`}
+                handleOk={() => {
+                  deleteHabitaciones(selectedData);
+                  setOpenDelete(false);
+                }}
+              />
             </>
           ) : (
             <>
               <FormHabitaciones
-                onCancelar={() => { setVerForm(false); setSelectedData(null); }}
+                onCancelar={() => {
+                  setVerForm(false);
+                  setSelectedData(null);
+                }}
                 fnEditar={edit}
                 fnGuardar={addHabitaciones}
                 data={selectedData}
                 setData={setSelectedData}
-                 enqueueSnackbar={enqueueSnackbar}
+                enqueueSnackbar={enqueueSnackbar}
               />
               <Snackbar
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 open={alertMessage.open}
                 autoHideDuration={4000}
-                onClose={() => setAlertMensaje({ ...alertMessage, open: false })}
+                onClose={() =>
+                  setAlertMensaje({ ...alertMessage, open: false })
+                }
               >
-                <Alert variant="filled" severity={alertMessage.alertType} onClose={() => setAlertMensaje({ ...alertMessage, open: false })}>
+                <Alert
+                  variant="filled"
+                  severity={alertMessage.alertType}
+                  onClose={() =>
+                    setAlertMensaje({ ...alertMessage, open: false })
+                  }
+                >
                   {alertMessage.message}
                 </Alert>
               </Snackbar>

@@ -11,7 +11,11 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  InputAdornment,
 } from "@mui/material";
+import { listHabitaciones } from "../habitaciones/services/habitacionService";
+import { lisBrazaletes } from "../brazaletes/services/brazaletesService";
+import { listMarca } from "../areas/services/areaService";
 
 export default function FormIngresos({
   onCancelar,
@@ -22,13 +26,18 @@ export default function FormIngresos({
   enqueueSnackbar,
 }) {
   const [formulario, setFormulario] = useState({
-    tipoIngreso: "",
-    habitacion: "",
-    huespedes: "",
+    descripcion: "",
+    idArea: "",
+    metodo: "",
     precio: "",
-    estado: "",
     ...data,
   });
+  const [area, setArea] = useState([]);
+  const [rooms, setRooms] = useState([]);
+  console.log("rooms here---: ", rooms);
+  const [brazalete, setBrazalete] = useState([]);
+  console.log("brazalete here--: ", brazalete);
+
   console.log("formularioooo ", formulario);
 
   useEffect(() => {
@@ -40,12 +49,98 @@ export default function FormIngresos({
     }
   }, [data]);
 
+  useEffect(() => {
+    getAreas();
+    getRooms();
+    getBrazalete();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getAreas = async () => {
+    const response = await listMarca();
+    if (response.valid) {
+      const filteredAreas = response.data.filter(
+        (item) => item.nombre !== "Restaurante"
+      );
+
+      setArea(filteredAreas);
+    } else {
+      console.log("response error: ", response);
+      enqueueSnackbar("Error al obtener las áreas.", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+
+  const getRooms = async () => {
+    const response = await listHabitaciones();
+    if (response.ok) {
+      // Convertir precio a número en cada habitación
+      const roomsNumericos = response.data.map((h) => ({
+        ...h,
+        precio: Number(h.precio),
+      }));
+      setRooms(roomsNumericos);
+    } else {
+      enqueueSnackbar("Error al obtener las habitaciones.", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+
+  const getBrazalete = async () => {
+    const response = await lisBrazaletes();
+    if (response.valid) {
+      setBrazalete(response.data);
+    } else {
+      console.log("response error: ", response);
+      enqueueSnackbar("Error al obtener los brazaletes.", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
     setFormulario((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleDescripcionChange = (e) => {
+    const value = e.target.value;
+    let precio = "";
+
+    if (formulario.idArea === 5) {
+      // Brazaletes
+      console.log("brazalete here--: ", brazalete);
+      const seleccionado = brazalete.find((b) => b.tipo_brazalete === value);
+      precio = seleccionado ? Number(seleccionado.precio) : "";
+    } else {
+      console.log("rooms here---: ", rooms);
+      // Habitaciones
+      const seleccionado = rooms.find((r) => r.tipo_habitacion === value);
+      precio = seleccionado ? Number(seleccionado.precio) : "";
+    }
+
+    setFormulario((prev) => ({
+      ...prev,
+      descripcion: value,
+      precio: precio,
     }));
   };
 
@@ -79,71 +174,99 @@ export default function FormIngresos({
 
         <Divider sx={{ my: 2 }} />
 
-        <Grid container spacing={2} sx={{ marginBottom: 2}}>
+        <Grid container spacing={2} sx={{ marginBottom: 2 }}>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth variant="outlined">
-              <InputLabel id="tipo-habitacion-label">
-                Tipo de Ingreso
-              </InputLabel>
+              <InputLabel id="area-label">Áreas</InputLabel>
               <Select
-                labelId="tipo-habitacion-label"
-                id="tipoIngreso"
-                name="tipoIngreso"
+                labelId="area-label"
+                id="idArea"
+                name="idArea"
                 required
-                value={formulario.tipoIngreso}
+                value={formulario.idArea}
+                placeholder="Seleccione un área"
                 onChange={handleInputChange}
-                label="Tipo de Ingreso"
+                label="Áreas"
+                variant="outlined"
               >
-                <MenuItem value="Hotel">Hotel</MenuItem>
-                <MenuItem value="Piscina">Piscina</MenuItem>
+                {area.map((area) => (
+                  <MenuItem key={area.id_area} value={area.id_area}>
+                    {area.nombre}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid>
         </Grid>
 
-
-        {formulario.tipoIngreso === "Hotel" ? (
+        {formulario.idArea === 5 ? (
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                id="habitacion"
-                name="habitacion"
-                label="Habitación"
-                type="number"
-                value={formulario.habitacion}
-                onChange={handleInputChange}
-                placeholder=" Habitación"
-                variant="outlined"
-              />
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="area-label">Brazaletes</InputLabel>
+                <Select
+                  labelId="area-label"
+                  id="descripcion"
+                  name="descripcion"
+                  required
+                  value={formulario.descripcion}
+                  placeholder="Seleccione un Brazalete"
+                  onChange={handleDescripcionChange}
+                  label="Brazaletes"
+                  variant="outlined"
+                >
+                  {brazalete.map((brazalete) => (
+                    <MenuItem
+                      key={brazalete.id_brazalete}
+                      value={brazalete.tipo_brazalete}
+                    >
+                      {brazalete.tipo_brazalete}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="rol-label">Método de pago</InputLabel>
+                <Select
+                  labelId="rol-label"
+                  id="metodo"
+                  name="metodo"
+                  required
+                  value={formulario.metodo}
+                  onChange={handleInputChange}
+                  placeholder="Seleccione un método"
+                  label="Método"
+                  variant="outlined"
+                >
+                  <MenuItem value="card">Tarjeta Débito / Crédito</MenuItem>
+                  <MenuItem value="cash">Efectivo</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
                 required
                 fullWidth
-                id="descripcion"
-                name="descripcion"
-                label="Descripción"
-                type="text"
-                value={formulario.descripcion}
+                id="precio"
+                name="precio"
+                label="Precio"
+                disabled
+                value={formulario.precio}
                 onChange={handleInputChange}
                 variant="outlined"
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                id="monto"
-                name="monto"
-                label="Monto"
-                type="number"
-                value={formulario.monto}
-                onChange={handleInputChange}
-                variant="outlined"
-                inputProps={{ step: "0.01" }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">Q</InputAdornment>
+                  ),
+                  //  endAdornment: (
+                  //   <InputAdornment position='end'>.00</InputAdornment>
+                  // ),
+                }}
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
 
@@ -168,45 +291,71 @@ export default function FormIngresos({
         ) : (
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                id="habitacion"
-                name="habitacion"
-                label="Pisicina"
-                type="number"
-                value={formulario.habitacion}
-                onChange={handleInputChange}
-                placeholder=" Piscina"
-                variant="outlined"
-              />
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="area-label">Habitaciones</InputLabel>
+                <Select
+                  labelId="area-label"
+                  id="descripcion"
+                  name="descripcion"
+                  required
+                  value={formulario.descripcion}
+                  placeholder="Seleccione un Habitaciones"
+                  onChange={handleDescripcionChange}
+                  label="Habitaciones"
+                  variant="outlined"
+                >
+                  {rooms.map((habitacion) => (
+                    <MenuItem
+                      key={habitacion.id_habitacion}
+                      value={habitacion.tipo_habitacion}
+                    >
+                      {habitacion.tipo_habitacion}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel id="rol-label">Método de pago</InputLabel>
+                <Select
+                  labelId="rol-label"
+                  id="metodo"
+                  name="metodo"
+                  required
+                  value={formulario.metodo}
+                  onChange={handleInputChange}
+                  placeholder="Seleccione un método"
+                  label="Método"
+                  variant="outlined"
+                >
+                  <MenuItem value="card">Tarjeta Débito / Crédito</MenuItem>
+                  <MenuItem value="cash">Efectivo</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
                 required
                 fullWidth
-                id="descripcion"
-                name="descripcion"
-                label="Descripción"
-                type="text"
-                value={formulario.descripcion}
+                disabled
+                id="precio"
+                name="precio"
+                label="Precio"
+                value={formulario.precio}
                 onChange={handleInputChange}
                 variant="outlined"
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                id="monto"
-                name="monto"
-                label="Monto"
-                type="number"
-                value={formulario.monto}
-                onChange={handleInputChange}
-                variant="outlined"
-                inputProps={{ step: "0.01" }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">Q</InputAdornment>
+                  ),
+                  // endAdornment: (
+                  //   <InputAdornment position='end'>.00</InputAdornment>
+                  // ),
+                }}
+                InputLabelProps={{ shrink: true }}
               />
             </Grid>
 
@@ -230,6 +379,20 @@ export default function FormIngresos({
           </Grid>
         )}
       </Paper>
+
+      <Typography
+        variant="body2"
+        sx={{
+          color: (theme) => theme.palette.text.disabled,
+          m: 2,
+          fontStyle: "italic",
+        }}
+      >
+        {formulario.idArea === 7
+          ? `Hotel seleccionado: ${formulario.descripcion} - Precio: Q. ${formulario.precio}`
+          : `Brazalete seleccionado: ${formulario.descripcion} - Precio: Q. ${formulario.precio}`}
+        {" | Recuerda que el precio es automático."}
+      </Typography>
 
       <Box display="flex" justifyContent="center" mt={2}>
         <Button

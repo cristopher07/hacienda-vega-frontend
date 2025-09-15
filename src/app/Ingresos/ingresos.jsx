@@ -228,12 +228,12 @@ export default function Ingresos() {
                 buscar={buscar}
               />
 
-                 <VistaIngresos
-                  totalIngresoHotel={totalIngresoHotel}
-                  totalIngresoPiscinas={totalIngresoPiscinas}
-                  totalIngresoGeneral={totalIngresoGeneral}
-                 />
-                
+              <VistaIngresos
+                totalIngresoHotel={totalIngresoHotel}
+                totalIngresoPiscinas={totalIngresoPiscinas}
+                totalIngresoGeneral={totalIngresoGeneral}
+              />
+
               <Listar
                 data={data}
                 columns={columns}
@@ -251,8 +251,6 @@ export default function Ingresos() {
                   setOpenDelete(true);
                 }}
               />
-
-           
 
               <Confirmation
                 open={openDelete}
@@ -278,6 +276,7 @@ export default function Ingresos() {
                 fnGuardar={addHabitaciones}
                 data={selectedData}
                 setData={setSelectedData}
+                enqueueSnackbar={enqueueSnackbar}
               />
               <Snackbar
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}

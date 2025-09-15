@@ -13,8 +13,7 @@ export const getHabitaciones = async (obj, rowsPerPage, pageFix, pagination = 1)
     }
 };
 
-//// LISTAR area selects
-export const listMarca = async () => {
+export const listHabitaciones = async () => {
     const urlMarcas = '/habitaciones/all';
     try {
       let respuesta = await axios.get(URL + urlMarcas + '?paginacion=0');
@@ -23,6 +22,7 @@ export const listMarca = async () => {
       return error;
     }
 };
+
 
 export const getHabitacionByQuery = async (obj, rowsPerPage, pageFix, pagination) => {
     try {

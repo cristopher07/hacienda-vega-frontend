@@ -33,8 +33,7 @@ export default function FormUsuarios({
     estado: "",
     ...data,
   });
-  console.log("dataaaa: ", data);
-  console.log("formulario: ", formulario);
+
   const [areas, setAreas] = useState([]);
   const [observacionLength, setObservacionLength] = useState(
     250 - (typeof data?.nombre === "string" ? data.nombre.length : 0)

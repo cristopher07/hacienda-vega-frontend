@@ -231,6 +231,7 @@ export default function Habitaciones() {
                 fnGuardar={addHabitaciones}
                 data={selectedData}
                 setData={setSelectedData}
+                 enqueueSnackbar={enqueueSnackbar}
               />
               <Snackbar
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}

@@ -14,7 +14,7 @@ export const getBrazaletes = async (obj, rowsPerPage, pageFix, pagination) => {
 };
 
 //// LISTAR area selects
-export const listMarca = async () => {
+export const lisBrazaletes = async () => {
     const urlMarcas = '/brazaletes/all';
     try {
       let respuesta = await axios.get(URL + urlMarcas + '?paginacion=0');

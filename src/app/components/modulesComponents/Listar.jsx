@@ -70,7 +70,11 @@ export default function Listar({
                         </TableCell>
                       );
                     } else {
-                      return <TableCell key={col.id}>{row[col.id]}</TableCell>;
+                        return (
+                          <TableCell key={col.id}>
+                            {col.render ? col.render(row) : row[col.id]}
+                          </TableCell>
+                        );
                     }
                   })}
                 </TableRow>

@@ -10,7 +10,8 @@ import {
 export default function VistaIngresos({
   totalIngresoHotel,
   totalIngresoPiscinas,
-  totalIngresoGeneral
+  totalIngresoGeneral,
+  mesActual
 }) {
   return (
     <Box sx={{ mt: 2, width: "100%", marginBottom: 6 }}>
@@ -53,7 +54,7 @@ export default function VistaIngresos({
 
               <Box textAlign="right">
                 <Typography variant="caption" color="text.secondary">
-                  Ingresos
+                  Ingresos {mesActual}
                 </Typography>
                 <Typography variant="h6" fontWeight={700}>
                   Q. {totalIngresoHotel}
@@ -102,7 +103,7 @@ export default function VistaIngresos({
 
               <Box textAlign="right">
                 <Typography variant="caption" color="text.secondary">
-                  Ingresos
+                  Ingresos {mesActual}
                 </Typography>
                 <Typography variant="h6" fontWeight={700}>
                   Q. {totalIngresoPiscinas}
@@ -139,7 +140,7 @@ export default function VistaIngresos({
                    </Avatar>
                    <Box>
                      <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "primary.main" }}>
-                       Total General
+                       General
                      </Typography>
                      <Typography variant="body2" color="text.secondary">
                        Gestión de ingresos hotel y piscinas
@@ -149,7 +150,7 @@ export default function VistaIngresos({
 
                  <Box textAlign="right">
                    <Typography variant="caption" color="text.secondary">
-                     Ingresos
+                     Ingresos {mesActual}
                    </Typography>
                    <Typography variant="h6" fontWeight={700}>
                     Q. {totalIngresoGeneral}

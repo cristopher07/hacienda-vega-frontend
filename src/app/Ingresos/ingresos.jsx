@@ -7,12 +7,13 @@ import { Replay } from "@mui/icons-material";
 import Buscar from "../components/modulesComponents/Buscar";
 import Listar from "../components/modulesComponents/Listar";
 import Confirmation from "../components/modulesComponents/Confirmation";
-
+import dayjs from "dayjs";
+import 'dayjs/locale/es';
 import {
-  addHabitacion,
-  deleteHabitacion,
-  editHabitacion,
-  getHabitacionByQuery,
+  createIngreso,
+  deleteIngreso,
+  editIngreso,
+  getIngresoByQuery,
 } from "./services/IngresosService";
 import { useSnackbar } from "notistack";
 import FormIngresos from "./ingresosForm";
@@ -25,6 +26,7 @@ export default function Ingresos() {
   const [verForm, setVerForm] = useState(false);
   const [data, setData] = useState([]);
   const [selectedData, setSelectedData] = useState(null);
+  console.log("selectedData--- editar: ", selectedData);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [pageFix, setpageFix] = useState(0);
   const [buscar, setBuscar] = useState("");
@@ -33,17 +35,20 @@ export default function Ingresos() {
     message: "",
     alertType: "info",
   });
-  const [totalIngresoHotel, setTotalIngresoHotel] = useState(1234);
-  const [totalIngresoPiscinas, setTotalIngresoPiscinas] = useState(2345);
-  const [totalIngresoGeneral, setTotalIngresoGeneral] = useState(2233);
+  const [totalIngresoHotel, setTotalIngresoHotel] = useState(0);
+  const [totalIngresoPiscinas, setTotalIngresoPiscinas] = useState(0);
+  const [totalIngresoGeneral, setTotalIngresoGeneral] = useState(0);
   const [openDelete, setOpenDelete] = useState(false);
-
+  const [mesActual, setMesActual] = useState('');
+  dayjs.locale('es');
   useEffect(() => {
-    cargarHabitaciones(buscar);
+    cargarIngresos(buscar);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buscar, rowsPerPage, pageFix]);
 
-  const cargarHabitaciones = async (busqueda) => {
-    let objResponse = await getHabitacionByQuery(
+  const cargarIngresos = async (busqueda) => {
+    let objResponse = await getIngresoByQuery(
       busqueda,
       rowsPerPage,
       pageFix,
@@ -51,11 +56,30 @@ export default function Ingresos() {
     );
     if (objResponse.valid) {
       setData(objResponse.data);
+      // Calcular totales del mes actual
+      const hoy = dayjs();
+      setMesActual(hoy.locale('es').format('MMMM'));
+      const ingresosMesActual = objResponse.data.filter(item =>
+        dayjs(item.fecha).month() === hoy.month() &&
+        dayjs(item.fecha).year() === hoy.year()
+      );
+      const totalHotel = ingresosMesActual
+        .filter(item => item.nombreArea === "Hotel")
+        .reduce((acc, curr) => acc + Number(curr.monto), 0);
+      const totalPiscina = ingresosMesActual
+        .filter(item => item.nombreArea === "Piscina")
+        .reduce((acc, curr) => acc + Number(curr.monto), 0);
+      const totalGeneral = ingresosMesActual
+        .reduce((acc, curr) => acc + Number(curr.monto), 0);
+      setTotalIngresoHotel(totalHotel);
+      setTotalIngresoPiscinas(totalPiscina);
+      setTotalIngresoGeneral(totalGeneral);
     } else {
+      console.log("objResponse", objResponse);
       setData([]);
       setAlertMensaje({
         open: true,
-        message: objResponse.message || "No se encontraron habitaciones.",
+        message: objResponse.message || "No se encontraron ingresos.",
         alertType: "warning",
       });
     }
@@ -67,13 +91,13 @@ export default function Ingresos() {
    * @param {null} null No tiene Parametros.
    * @public
    */
-  const addHabitaciones = async (obj) => {
-    let objRespuesta = await addHabitacion({
+  const addIngreso = async (obj) => {
+    let objRespuesta = await createIngreso({
       ...obj,
     });
     if (objRespuesta.valid) {
-      cargarHabitaciones(buscar);
-      enqueueSnackbar("Se agregó correctamente la habitación.", {
+      cargarIngresos(buscar);
+      enqueueSnackbar("Se agregó correctamente su ingreso.", {
         variant: "success",
         anchorOrigin: {
           vertical: "bottom",
@@ -81,6 +105,7 @@ export default function Ingresos() {
         },
       });
     } else {
+      console.log("errorrr", objRespuesta);
       enqueueSnackbar(objRespuesta.msg || "Error al crear la habitación.", {
         variant: "error",
         anchorOrigin: {
@@ -93,11 +118,11 @@ export default function Ingresos() {
   };
 
   const edit = async (obj) => {
-    let objRespuesta = await editHabitacion({
+    let objRespuesta = await editIngreso({
       ...obj,
     });
     if (objRespuesta.valid) {
-      cargarHabitaciones(buscar);
+      cargarIngresos(buscar);
       enqueueSnackbar("Se editó correctamente la habitación.", {
         variant: "success",
         anchorOrigin: {
@@ -137,11 +162,11 @@ export default function Ingresos() {
    * @return {alertMessage} Mensaje de respuesta correcta o error
    * @public
    */
-  const deleteHabitaciones = async (index) => {
-    let objRespuesta = await deleteHabitacion(index.id_habitacion);
+  const deleteIng = async (index) => {
+    let objRespuesta = await deleteIngreso(index.id_ingreso);
     if (objRespuesta.valid) {
-      cargarHabitaciones(buscar);
-      enqueueSnackbar("Se eliminó correctamente la habitación.", {
+      cargarIngresos(buscar);
+      enqueueSnackbar("Se eliminó correctamente el ingreso.", {
         variant: "success",
         anchorOrigin: {
           vertical: "bottom",
@@ -162,11 +187,16 @@ export default function Ingresos() {
   };
 
   const columns = [
-    { id: "id_habitacion", label: "ID" },
-    { id: "tipo_habitacion", label: "Tipo de Habitación" },
-    { id: "numero_habitacion", label: "# de Habitación" },
-    { id: "huespedes", label: "Cantidad de Huespedes" },
-    { id: "precio", label: "Precio" },
+    { id: "id_ingreso", label: "ID" },
+    { id: "nombreArea", label: "Nombre Área" },
+    { id: "descripcion", label: "Descripción Ingreso" },
+    { id: "monto", label: "Precio" },
+    { id: "metodo", label: "Método" },
+    {
+      id: "fecha",
+      label: "Fecha",
+      render: (row) => dayjs(row.fecha).format("DD/MM/YYYY"),
+    },
     {
       id: "actions",
       label: "Acciones",
@@ -232,6 +262,7 @@ export default function Ingresos() {
                 totalIngresoHotel={totalIngresoHotel}
                 totalIngresoPiscinas={totalIngresoPiscinas}
                 totalIngresoGeneral={totalIngresoGeneral}
+                mesActual={mesActual}
               />
 
               <Listar
@@ -256,11 +287,11 @@ export default function Ingresos() {
                 open={openDelete}
                 handleClose={() => setOpenDelete(false)}
                 title={"Advertencia"}
-                message={`¿Está seguro de eliminar la habitación?: Habitación # ${
-                  selectedData ? selectedData.numero_habitacion : ""
+                message={`¿Está seguro de eliminar el ingreso?: Ingreso # ${
+                  selectedData ? selectedData.id_ingreso : ""
                 }`}
                 handleOk={() => {
-                  deleteHabitaciones(selectedData);
+                  deleteIng(selectedData);
                   setOpenDelete(false);
                 }}
               />
@@ -273,7 +304,7 @@ export default function Ingresos() {
                   setSelectedData(null);
                 }}
                 fnEditar={edit}
-                fnGuardar={addHabitaciones}
+                fnGuardar={addIngreso}
                 data={selectedData}
                 setData={setSelectedData}
                 enqueueSnackbar={enqueueSnackbar}

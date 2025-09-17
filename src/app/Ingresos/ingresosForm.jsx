@@ -30,15 +30,13 @@ export default function FormIngresos({
     idArea: "",
     metodo: "",
     precio: "",
+    estado: 1,
     ...data,
   });
   const [area, setArea] = useState([]);
   const [rooms, setRooms] = useState([]);
-  console.log("rooms here---: ", rooms);
   const [brazalete, setBrazalete] = useState([]);
-  console.log("brazalete here--: ", brazalete);
 
-  console.log("formularioooo ", formulario);
 
   useEffect(() => {
     if (data) {
@@ -65,7 +63,6 @@ export default function FormIngresos({
 
       setArea(filteredAreas);
     } else {
-      console.log("response error: ", response);
       enqueueSnackbar("Error al obtener las áreas.", {
         variant: "error",
         anchorOrigin: {
@@ -101,7 +98,6 @@ export default function FormIngresos({
     if (response.valid) {
       setBrazalete(response.data);
     } else {
-      console.log("response error: ", response);
       enqueueSnackbar("Error al obtener los brazaletes.", {
         variant: "error",
         anchorOrigin: {
@@ -127,11 +123,9 @@ export default function FormIngresos({
 
     if (formulario.idArea === 5) {
       // Brazaletes
-      console.log("brazalete here--: ", brazalete);
       const seleccionado = brazalete.find((b) => b.tipo_brazalete === value);
       precio = seleccionado ? Number(seleccionado.precio) : "";
     } else {
-      console.log("rooms here---: ", rooms);
       // Habitaciones
       const seleccionado = rooms.find((r) => r.tipo_habitacion === value);
       precio = seleccionado ? Number(seleccionado.precio) : "";
@@ -147,7 +141,7 @@ export default function FormIngresos({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formulario.tipoIngreso || !formulario.habitacion) {
+    if (!formulario.precio ) {
       enqueueSnackbar("Por favor complete todos los campos obligatorios.", {
         variant: "error",
         anchorOrigin: {
@@ -241,8 +235,9 @@ export default function FormIngresos({
                   label="Método"
                   variant="outlined"
                 >
-                  <MenuItem value="card">Tarjeta Débito / Crédito</MenuItem>
-                  <MenuItem value="cash">Efectivo</MenuItem>
+                  <MenuItem value="Tarjeta">Tarjeta Débito / Crédito</MenuItem>
+                  <MenuItem value="Efectivo">Efectivo</MenuItem>
+                   <MenuItem value="Transferencia">Transferencia</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -330,8 +325,9 @@ export default function FormIngresos({
                   label="Método"
                   variant="outlined"
                 >
-                  <MenuItem value="card">Tarjeta Débito / Crédito</MenuItem>
-                  <MenuItem value="cash">Efectivo</MenuItem>
+                  <MenuItem value="Tarjeta">Tarjeta Débito / Crédito</MenuItem>
+                  <MenuItem value="Efectivo">Efectivo</MenuItem>
+                  <MenuItem value="Transferencia">Transferencia</MenuItem>
                 </Select>
               </FormControl>
             </Grid>

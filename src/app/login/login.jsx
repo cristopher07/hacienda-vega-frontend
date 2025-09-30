@@ -161,7 +161,7 @@ export default function LoginView() {
                   sx={{ 
                     fontWeight: 'bold', 
                     lineHeight: 1.2, 
-                    mb: 2,
+                    mb: 6,
                     fontSize: { xs: '2.5rem', lg: '3.5rem' }
                   }}
                 >

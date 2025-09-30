@@ -21,7 +21,6 @@ const LoginContainer = styled(Container)(({ theme }) => ({
   justifyContent: 'center',
   background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
   padding: theme.spacing(2),
-   backgroundColor: "red"
 }));
 
 const LoginPaper = styled(Paper)(({ theme }) => ({
@@ -30,20 +29,20 @@ const LoginPaper = styled(Paper)(({ theme }) => ({
   borderRadius: '24px',
   overflow: 'hidden',
   boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-  minHeight: '200px',
+  minHeight: '120px',
  
 }));
 
 const LeftPanel = styled(Box)(({ theme }) => ({
   background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 50%, #0d47a1 100%)',
   color: 'white',
-  padding: theme.spacing(6),
+  padding: theme.spacing(3),
+  minHeight: '450px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
   position: 'relative',
   overflow: 'hidden',
-  minHeight: '600px',
   '&::before': {
     content: '""',
     position: 'absolute',
@@ -61,7 +60,7 @@ const LeftPanel = styled(Box)(({ theme }) => ({
     bottom: '-10%',
     right: '-10%',
     width: '120px',
-    height: '120px',
+    height: '100px',
     background: 'rgba(255,255,255,0.1)',
     borderRadius: '50%',
     filter: 'blur(20px)',
@@ -71,11 +70,11 @@ const LeftPanel = styled(Box)(({ theme }) => ({
 
 
 const RightPanel = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(6),
+  padding: theme.spacing(3),
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  minHeight: '600px',
+  minHeight: '450px',
 }));
 
 

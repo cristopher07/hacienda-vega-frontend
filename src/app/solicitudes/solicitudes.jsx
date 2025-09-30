@@ -139,6 +139,7 @@ export default function Solicitudes() {
    * @public
    */
   const deleteSolicitud = async (index) => {
+    console.log("index: ", index);
     let objRespuesta = await deleteSolicitudes(
       index.id_solicitud,
     );
@@ -290,8 +291,8 @@ export default function Solicitudes() {
                     open={openDelete}
                     handleClose={() => setOpenDelete(false)}
                     title={"Advertencia"}
-                    message={`¿Está seguro de eliminar el Producto?: ${
-                      selectedData ? selectedData.producto : ""
+                    message={`¿Está seguro de eliminar la Solicitud?: ${
+                      selectedData ? selectedData.id_solicitud : ""
                     }`}
                     handleOk={() => { deleteSolicitud(selectedData); setOpenDelete(false); }}
                   />

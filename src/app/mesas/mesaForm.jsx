@@ -25,8 +25,11 @@ export default function FormMesas({
     tipo_de_mesa: "",
     capacidad: "",
     estado: "",
+    nombre: "",
     ...data,
   });
+
+
 
   useEffect(() => {
     if (data) {
@@ -77,19 +80,36 @@ export default function FormMesas({
         <Divider sx={{ my: 2 }} />
 
         <Grid container spacing={2}>
-          
-
           <Grid item xs={12} sm={6}>
             <TextField
+              required
               fullWidth
-              id="tipo_de_mesa"
-              name="tipo_de_mesa"
-              label="Tipo de Mesa"
-              value={formulario.tipo_de_mesa}
+              id="nombre"
+              name="nombre"
+              label="Nombre Mesa"
+              type="text"
+              value={formulario.nombre}
               onChange={handleInputChange}
-              placeholder="Descripción breve de tipo de Mesa (Rancho o Mesa)"
+              placeholder="Mesa 1, Rancho 1"
               variant="outlined"
             />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="tipo-brazalete-label">Tipo de Mesa</InputLabel>
+              <Select
+                labelId="tipo_de_mesa"
+                id="tipo_de_mesa"
+                name="tipo_de_mesa"
+                required
+                value={formulario.tipo_de_mesa}
+                onChange={handleInputChange}
+                label="Tipo de Mesa"
+              >
+                <MenuItem value="Rancho">Rancho</MenuItem>
+                <MenuItem value="Mesa">Mesa</MenuItem>
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={12} sm={6}>
@@ -107,20 +127,21 @@ export default function FormMesas({
             />
           </Grid>
 
-          <Grid item xs={12} sm={6}>
+           <Grid item xs={12} sm={6}>
             <FormControl fullWidth variant="outlined">
-              <InputLabel id="estado-label">Estado</InputLabel>
+              <InputLabel id="tipo-brazalete-label">Tipo de Mesa</InputLabel>
               <Select
-                labelId="estado-label"
+                labelId="estado"
                 id="estado"
                 name="estado"
                 required
                 value={formulario.estado}
                 onChange={handleInputChange}
-                label="Estado"
+                label="Tipo de Mesa"
               >
-                <MenuItem value={1}>Activo</MenuItem>
-                <MenuItem value={0}>Inactivo</MenuItem>
+                <MenuItem value="Disponible">Disponible</MenuItem>
+                <MenuItem value="Ocupada">Ocupada</MenuItem>
+                <MenuItem value="Pedido listo">Pedido Listo</MenuItem>
               </Select>
             </FormControl>
           </Grid>

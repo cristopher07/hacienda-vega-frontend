@@ -30,13 +30,17 @@ export default function FormIngresos({
     idArea: "",
     metodo: "",
     precio: "",
+    cantidad: "",
+    fechaInicio: "",
+    fechaFin: "",
+    idHabitacion: "",
     estado: 1,
     ...data,
   });
+  console.log("formulario ingresos: ", formulario);
   const [area, setArea] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [brazalete, setBrazalete] = useState([]);
-
 
   useEffect(() => {
     if (data) {
@@ -125,23 +129,53 @@ export default function FormIngresos({
       // Brazaletes
       const seleccionado = brazalete.find((b) => b.tipo_brazalete === value);
       precio = seleccionado ? Number(seleccionado.precio) : "";
+      const cantidad = Number(formulario.cantidad) || 1;
+      setFormulario((prev) => ({
+        ...prev,
+        descripcion: value,
+        precio: precio * cantidad,
+      }));
     } else {
       // Habitaciones
       const seleccionado = rooms.find((r) => r.tipo_habitacion === value);
+      console.log("seleccionado habitaciones: ", seleccionado);
       precio = seleccionado ? Number(seleccionado.precio) : "";
+      setFormulario((prev) => ({
+        ...prev,
+        descripcion: value,
+        precio: precio,
+        idHabitacion: seleccionado ? seleccionado.id_habitacion : "",
+      }));
     }
+  };
 
-    setFormulario((prev) => ({
-      ...prev,
-      descripcion: value,
-      precio: precio,
-    }));
+  const handleCantidadChange = (e) => {
+    const cantidad = Number(e.target.value) || 1;
+
+    if (formulario.idArea === 5 && formulario.descripcion) {
+      // Solo para brazaletes y si ya hay un tipo seleccionado
+      const seleccionado = brazalete.find(
+        (b) => b.tipo_brazalete === formulario.descripcion
+      );
+      const precioUnitario = seleccionado ? Number(seleccionado.precio) : 0;
+
+      setFormulario((prev) => ({
+        ...prev,
+        cantidad: e.target.value,
+        precio: precioUnitario * cantidad,
+      }));
+    } else {
+      setFormulario((prev) => ({
+        ...prev,
+        cantidad: e.target.value,
+      }));
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formulario.precio ) {
+    if (!formulario.precio) {
       enqueueSnackbar("Por favor complete todos los campos obligatorios.", {
         variant: "error",
         anchorOrigin: {
@@ -151,6 +185,18 @@ export default function FormIngresos({
       });
       return;
     }
+
+    if(formulario.idArea === 7){
+    if (formulario.fechaFin === formulario.fechaInicio) {
+      enqueueSnackbar(
+        "La fecha de fin debe ser diferente a la fecha de inicio.",
+        {
+          variant: "error",
+        }
+      );
+      return;
+    }
+  }
 
     if (data) {
       fnEditar(formulario);
@@ -237,7 +283,7 @@ export default function FormIngresos({
                 >
                   <MenuItem value="Tarjeta">Tarjeta Débito / Crédito</MenuItem>
                   <MenuItem value="Efectivo">Efectivo</MenuItem>
-                   <MenuItem value="Transferencia">Transferencia</MenuItem>
+                  <MenuItem value="Transferencia">Transferencia</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -261,6 +307,21 @@ export default function FormIngresos({
                   //   <InputAdornment position='end'>.00</InputAdornment>
                   // ),
                 }}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                fullWidth
+                id="cantidad"
+                name="cantidad"
+                label="Cantidad"
+                type="number"
+                value={formulario.cantidad}
+                onChange={handleCantidadChange}
+                variant="outlined"
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -299,14 +360,18 @@ export default function FormIngresos({
                   label="Habitaciones"
                   variant="outlined"
                 >
-                  {rooms.map((habitacion) => (
-                    <MenuItem
-                      key={habitacion.id_habitacion}
-                      value={habitacion.tipo_habitacion}
-                    >
-                      {habitacion.tipo_habitacion}
-                    </MenuItem>
-                  ))}
+                  {rooms
+                    .filter((disponible) => disponible.disponible === 1)
+                    .map((habitacion) => (
+                      <MenuItem
+                        key={habitacion.id_habitacion}
+                        value={habitacion.tipo_habitacion}
+                      >
+                        {habitacion.tipo_habitacion +
+                          " #" +
+                          habitacion.numero_habitacion}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             </Grid>
@@ -371,6 +436,46 @@ export default function FormIngresos({
                   <MenuItem value={0}>Inactivo</MenuItem>
                 </Select>
               </FormControl>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                fullWidth
+                id="fechaInicio"
+                name="fechaInicio"
+                label={`Fecha de Ingreso `}
+                value={formulario.fechaInicio}
+                onChange={handleInputChange}
+                placeholder="Fecha de Ingreso"
+                variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                inputProps={{
+                  min: new Date().toISOString().split("T")[0],
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                fullWidth
+                id="fechaFin"
+                name="fechaFin"
+                label={`Fecha de Salida `}
+                value={formulario.fechaFin}
+                onChange={handleInputChange}
+                placeholder="Fecha de Salida"
+                variant="outlined"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                inputProps={{
+                  min:
+                    formulario.fechaInicio ||
+                    new Date().toISOString().split("T")[0],
+                }}
+              />
             </Grid>
           </Grid>
         )}

@@ -8,8 +8,13 @@ import Buscar from "../components/modulesComponents/Buscar";
 import Listar from "../components/modulesComponents/Listar";
 import Confirmation from "../components/modulesComponents/Confirmation";
 import FormMesas from "./mesaForm";
-import { addMesa, deleteMesa, editMesa, getMesaByQuery } from "./services/mesaService";
-import { useSnackbar } from 'notistack';
+import {
+  addMesa,
+  deleteMesa,
+  editMesa,
+  getMesaByQuery,
+} from "./services/mesaService";
+import { useSnackbar } from "notistack";
 
 export default function Mesas() {
   const [title] = useState("MESAS");
@@ -21,84 +26,88 @@ export default function Mesas() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [pageFix, setpageFix] = useState(0);
   const [buscar, setBuscar] = useState("");
-  const [alertMessage, setAlertMensaje] = useState({ open: false, message: "", alertType: "info" });
+  const [alertMessage, setAlertMensaje] = useState({
+    open: false,
+    message: "",
+    alertType: "info",
+  });
   const [openDelete, setOpenDelete] = useState(false);
 
   useEffect(() => {
     cargarMesas(buscar);
+    // eslint-disabled-next-line
   }, [buscar, rowsPerPage, pageFix]);
 
   const cargarMesas = async (busqueda) => {
-    let objResponse = await getMesaByQuery(busqueda, rowsPerPage, pageFix, '');
-        if (objResponse.valid) {
-          setData(objResponse.data);
-        } else {
-          setData([]);
-          setAlertMensaje({
-            open: true,
-            message: objResponse.message || "No se encontraron mesas.",
-            alertType: "warning",
-          });
-        }
+    let objResponse = await getMesaByQuery(busqueda, rowsPerPage, pageFix, "");
+    if (objResponse.valid) {
+      setData(objResponse.data);
+    } else {
+      setData([]);
+      setAlertMensaje({
+        open: true,
+        message: objResponse.message || "No se encontraron mesas.",
+        alertType: "warning",
+      });
+    }
   };
 
-    /**
-     * AGREGAR LOS COLORES NUEVOS.
-     *
-     * @param {null} null No tiene Parametros.
-     * @public
-     */
-    const addMesas = async (obj) => {
-      let objRespuesta = await addMesa({
-        ...obj,
-      });
-      if (objRespuesta.valid) {
-        cargarMesas(buscar);
-        enqueueSnackbar("Se agregó correctamente la mesa.", {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "right",
-          },
-        });
-      } else {
-      enqueueSnackbar(objRespuesta.msg || 'Error al crear la mesa.', {
-        variant: 'error',
+  /**
+   * AGREGAR LOS COLORES NUEVOS.
+   *
+   * @param {null} null No tiene Parametros.
+   * @public
+   */
+  const addMesas = async (obj) => {
+    let objRespuesta = await addMesa({
+      ...obj,
+    });
+    if (objRespuesta.valid) {
+      cargarMesas(buscar);
+      enqueueSnackbar("Se agregó correctamente la mesa.", {
+        variant: "success",
         anchorOrigin: {
-          vertical: 'bottom',
-          horizontal: 'right',
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    } else {
+      enqueueSnackbar(objRespuesta.msg || "Error al crear la mesa.", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
         },
       });
     }
-      setVerForm(false);
-    };
-    
+    setVerForm(false);
+  };
 
   const edit = async (obj) => {
-      let objRespuesta = await editMesa({
-        ...obj,
+    let objRespuesta = await editMesa({
+      ...obj,
+    });
+    if (objRespuesta.valid) {
+      cargarMesas(buscar);
+      enqueueSnackbar("Se editó correctamente la mesa.", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
       });
-      if (objRespuesta.valid) {
-        cargarMesas(buscar);
-        enqueueSnackbar("Se editó correctamente la mesa.", {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "right",
-          },
-        });
-      } else {
-        enqueueSnackbar(objRespuesta.msg || 'Error al editar la mesa.', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'right',
-          },
-        });
-      }
-      setVerForm(false);
-      setSelectedData();
-    };
+    } else {
+      enqueueSnackbar(objRespuesta.msg || "Error al editar la mesa.", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    }
+    setVerForm(false);
+    setSelectedData();
+  };
 
   /*const deleteBebidas = async (obj) => {
     const res = await deleteBebida(obj.id_bebida);
@@ -113,42 +122,41 @@ export default function Mesas() {
   };*/
 
   /**
-     * ELIMINA EL COLOR SEGUN VALIDACIONES REALIZADAS.
-     *
-     * @param {int} index Id del período a eliminar
-     * @return {alertMessage} Mensaje de respuesta correcta o error
-     * @public
-     */
-    const deleteMesas = async (index) => {
-      let objRespuesta = await deleteMesa(
-        index.id_mesa,
-      );
-      if (objRespuesta.valid) {
-        cargarMesas(buscar);
-        enqueueSnackbar("Se eliminó correctamente la mesa.", {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "right",
-          },
-        });
-      } else {
-        enqueueSnackbar(objRespuesta.msg || 'Error al eliminar la mesa.', {
-          variant: 'error',
-          anchorOrigin: {
-            vertical: 'bottom',
-            horizontal: 'right',
-          },
-        });
-      }
-      setVerForm(false);
-      setSelectedData();
-    };
-  
+   * ELIMINA EL COLOR SEGUN VALIDACIONES REALIZADAS.
+   *
+   * @param {int} index Id del período a eliminar
+   * @return {alertMessage} Mensaje de respuesta correcta o error
+   * @public
+   */
+  const deleteMesas = async (index) => {
+    let objRespuesta = await deleteMesa(index.id_mesa);
+    if (objRespuesta.valid) {
+      cargarMesas(buscar);
+      enqueueSnackbar("Se eliminó correctamente la mesa.", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    } else {
+      enqueueSnackbar(objRespuesta.msg || "Error al eliminar la mesa.", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    }
+    setVerForm(false);
+    setSelectedData();
+  };
 
   const columns = [
     { id: "id_mesa", label: "ID" },
+    { id: "nombre", label: "Nombre Mesa" },
     { id: "tipo_de_mesa", label: "Tipo de Mesa" },
+    { id: "estado", label: "Disponibilidad" },
     { id: "capacidad", label: "Capacidad" },
     {
       id: "actions",
@@ -179,16 +187,27 @@ export default function Mesas() {
   ];
 
   return (
-    <MainLayout title={title} subtitle={subTitle}
-      meta={verForm && (
-        <div>
-          <Button variant="contained" color="primary" type="button"
-            onClick={() => { setVerForm(false); setSelectedData(null); }}
-            startIcon={<Replay />}>
-            REGRESAR
-          </Button>
-        </div>
-      )}
+    <MainLayout
+      title={title}
+      subtitle={subTitle}
+      meta={
+        verForm && (
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              type="button"
+              onClick={() => {
+                setVerForm(false);
+                setSelectedData(null);
+              }}
+              startIcon={<Replay />}
+            >
+              REGRESAR
+            </Button>
+          </div>
+        )
+      }
       metacontent={
         <>
           {!verForm ? (
@@ -207,24 +226,36 @@ export default function Mesas() {
                 count={data[0]?.count || 0}
                 pageFix={pageFix}
                 setpageFix={setpageFix}
-                onEdit={(row) => { setSelectedData(row); setVerForm(true); }}
-                onDelete={(row) => { setSelectedData(row); setOpenDelete(true); }}
+                onEdit={(row) => {
+                  setSelectedData(row);
+                  setVerForm(true);
+                }}
+                onDelete={(row) => {
+                  setSelectedData(row);
+                  setOpenDelete(true);
+                }}
               />
-              
+
               <Confirmation
-                                  open={openDelete}
-                                  handleClose={() => setOpenDelete(false)}
-                                  title={"Advertencia"}
-                                  message={`¿Está seguro de eliminar la mesa?: ${
-                                    selectedData ? selectedData.tipo_de_mesa : ""
-                                  }`}
-                                  handleOk={() => { deleteMesas(selectedData); setOpenDelete(false); }}
-                                />
+                open={openDelete}
+                handleClose={() => setOpenDelete(false)}
+                title={"Advertencia"}
+                message={`¿Está seguro de eliminar la mesa?: ${
+                  selectedData ? selectedData.tipo_de_mesa : ""
+                }`}
+                handleOk={() => {
+                  deleteMesas(selectedData);
+                  setOpenDelete(false);
+                }}
+              />
             </>
           ) : (
             <>
               <FormMesas
-                onCancelar={() => { setVerForm(false); setSelectedData(null); }}
+                onCancelar={() => {
+                  setVerForm(false);
+                  setSelectedData(null);
+                }}
                 fnEditar={edit}
                 fnGuardar={addMesas}
                 data={selectedData}
@@ -234,9 +265,17 @@ export default function Mesas() {
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 open={alertMessage.open}
                 autoHideDuration={4000}
-                onClose={() => setAlertMensaje({ ...alertMessage, open: false })}
+                onClose={() =>
+                  setAlertMensaje({ ...alertMessage, open: false })
+                }
               >
-                <Alert variant="filled" severity={alertMessage.alertType} onClose={() => setAlertMensaje({ ...alertMessage, open: false })}>
+                <Alert
+                  variant="filled"
+                  severity={alertMessage.alertType}
+                  onClose={() =>
+                    setAlertMensaje({ ...alertMessage, open: false })
+                  }
+                >
                   {alertMessage.message}
                 </Alert>
               </Snackbar>

@@ -159,6 +159,18 @@ export default function Habitaciones() {
   const columns = [
     { id: "id_habitacion", label: "ID" },
     { id: "tipo_habitacion", label: "Tipo de Habitación" },
+    { 
+      id: "disponible", 
+      label: "Disponibilidad",
+      render: (row) => {
+        switch(row.disponible) {
+          case 1: return "Disponible";
+          case 2: return "Ocupada";
+          case 3: return "Mantenimiento u otro";
+          default: return "Sin definir";
+        }
+      }
+    },
     { id: "numero_habitacion", label: "# de Habitación" },
     { id: "huespedes", label: "Cantidad de Huespedes" },
     { id: "precio", label: "Precio" },

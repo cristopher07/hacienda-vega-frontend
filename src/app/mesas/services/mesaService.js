@@ -44,6 +44,7 @@ export const addMesa = async (obj) => {
 }
 
 export const editMesa = async (obj) => {
+    console.log("obj edit mesa: ", obj);
     try {
         const response = await axios.post(URL + `/mesas/Update/${obj.id_mesa}`, obj);
         return response.data;

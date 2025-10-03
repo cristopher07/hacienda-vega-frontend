@@ -27,6 +27,7 @@ export default function FormHabitaciones({
     huespedes: "",
     precio: "",
     estado: "",
+    disponible: "", 
     ...data,
   });
 
@@ -143,6 +144,25 @@ export default function FormHabitaciones({
               inputProps={{ step: "0.01" }}
             />
           </Grid>
+
+             <Grid item xs={12} sm={6}>
+                      <FormControl fullWidth variant="outlined">
+                        <InputLabel id="tipo-brazalete-label">Disponibilidad</InputLabel>
+                        <Select
+                          labelId="disponible"
+                          id="disponible"
+                          name="disponible"
+                          required
+                          value={formulario.disponible}
+                          onChange={handleInputChange}
+                          label="Disponibilidad"
+                        >
+                          <MenuItem value={1}>Disponible</MenuItem>
+                          <MenuItem value={2}>Ocupada</MenuItem>
+                          <MenuItem value={3}>Mantenimiento u otro</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
 
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth variant="outlined">

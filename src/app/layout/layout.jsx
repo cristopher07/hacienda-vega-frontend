@@ -1,9 +1,17 @@
 import { Outlet } from "react-router-dom";
 import { AppBar, Box, IconButton, Toolbar, Typography } from "@mui/material";
+import { useState } from "react";
+import MenuIcon from "@mui/icons-material/Menu";
 import DrawerMenu from "../components/drawer/drawer";
 import UserMenu from "../components/navigateButton/userMenu";
 
 export default function Layout() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen((prev) => !prev);
+  };
+
   return (
     <Box sx={{ display: "flex" }}>
       {/* AppBar superior */}
@@ -15,6 +23,14 @@ export default function Layout() {
         }}
       >
         <Toolbar>
+          <IconButton
+            color="inherit"
+            edge="start"
+            onClick={toggleDrawer}
+            sx={{ marginRight: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             HACIENDA LA VEGA
           </Typography>
@@ -25,7 +41,7 @@ export default function Layout() {
       </AppBar>
 
       {/* Drawer lateral */}
-      <DrawerMenu />
+      <DrawerMenu isOpen={isDrawerOpen} />
 
       {/* Contenido principal */}
       <Box
@@ -35,7 +51,7 @@ export default function Layout() {
           display: "flex",
           flexDirection: "column",
           backgroundColor: "#f3f2f2",
-          minHeight: "100vh", 
+          minHeight: "100vh",
         }}
       >
         {/* <Toolbar /> */}

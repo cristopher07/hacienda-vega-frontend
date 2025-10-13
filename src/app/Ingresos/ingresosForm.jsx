@@ -490,8 +490,8 @@ export default function FormIngresos({
         }}
       >
         {formulario.idArea === 7
-          ? `Hotel seleccionado: ${formulario.descripcion} - Precio: Q. ${formulario.precio}`
-          : `Brazalete seleccionado: ${formulario.descripcion} - Precio: Q. ${formulario.precio}`}
+          ? `Hotel seleccionado: ${formulario.descripcion} - Precio: Q. ${formulario.precio} por noche.` 
+          : `Brazalete seleccionado: ${formulario.descripcion} - Precio: Q. ${formulario.precio} por cantidad y precio.`}
         {" | Recuerda que el precio es automático."}
       </Typography>
 

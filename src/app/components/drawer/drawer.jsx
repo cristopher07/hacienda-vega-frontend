@@ -34,6 +34,8 @@ const menuItems = [
   { text: "Habitaciones", icon: <RoomService />, path: "/app/habitaciones" },
   { text: "Ingresos", icon: <AttachMoney />, path: "/app/ingresos" },
   { text: "Brazaletes", icon: <LocalActivity />, path: "/app/brazaletes" },
+  { text: "Comandas", icon: <Assignment />, path: "/app/comandas" }, // <-- Nueva opción
+
 ];
 
 export default function DrawerMenu({ isOpen }) {

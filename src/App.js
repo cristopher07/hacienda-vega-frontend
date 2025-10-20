@@ -12,6 +12,7 @@ import Habitaciones from "./app/habitaciones/habitaciones";
 import Menus from "./app/menus/menus";
 import Ingresos from "./app/Ingresos/ingresos";
 import Brazaletes from "./app/brazaletes/brazaletes";
+import Comandas from "./app/comandas/comandas";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="habitaciones" element={<Habitaciones />} />
           <Route path="ingresos" element={<Ingresos/>} />
           <Route path="brazaletes" element={<Brazaletes />} />
+          <Route path="comandas" element={<Comandas />} />
           {/* <Route path="table" element={<TablePage />} /> */}
         </Route>
       </Routes>

@@ -37,7 +37,7 @@ export default function FormIngresos({
     estado: 1,
     ...data,
   });
-  console.log("formulario ingresos: ", formulario);
+
   const [area, setArea] = useState([]);
   const [rooms, setRooms] = useState([]);
   const [brazalete, setBrazalete] = useState([]);
@@ -138,7 +138,6 @@ export default function FormIngresos({
     } else {
       // Habitaciones
       const seleccionado = rooms.find((r) => r.tipo_habitacion === value);
-      console.log("seleccionado habitaciones: ", seleccionado);
       precio = seleccionado ? Number(seleccionado.precio) : "";
       setFormulario((prev) => ({
         ...prev,

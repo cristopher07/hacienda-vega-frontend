@@ -13,11 +13,22 @@ import {
   MenuItem,
   InputAdornment,
 } from "@mui/material";
-import { listHabitaciones } from "../habitaciones/services/habitacionService";
-import { lisBrazaletes } from "../brazaletes/services/brazaletesService";
-import { listMarca } from "../areas/services/areaService";
 
-export default function FormIngresos({
+import { listMarca } from "../mesas/services/mesaService";
+import { listMesas } from "../menus/services/menuService";
+import { listBebidas } from "../bebidas/services/bebidaService";
+ import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    IconButton,
+  } from "@mui/material";
+  import DeleteIcon from '@mui/icons-material/Delete';
+
+export default function ComandasForm({
   onCancelar,
   fnGuardar,
   fnEditar,
@@ -25,22 +36,41 @@ export default function FormIngresos({
   titulo = "",
   enqueueSnackbar,
 }) {
+  const [mesa, setMesa] = useState([]);
+  const [menu, setMenu] = useState([]);
+  const [bebidas, setBebidas] = useState([]);
+  const [comandaItems, setComandaItems] = useState([]);
+
   const [formulario, setFormulario] = useState({
+    id_mesa: "",
+    id_menu: "",
+    id_bebida: "",
     descripcion: "",
-    idArea: "",
+    subtotal: "",
+    fecha: "",
+    observacion: "",
+    total: "",
+    tipo_pago: "",
     metodo: "",
-    precio: "",
-    cantidad: "",
-    fechaInicio: "",
-    fechaFin: "",
-    idHabitacion: "",
     estado: 1,
     ...data,
   });
-  console.log("formulario ingresos: ", formulario);
-  const [area, setArea] = useState([]);
-  const [rooms, setRooms] = useState([]);
-  const [brazalete, setBrazalete] = useState([]);
+
+
+  const getSelectedPrices = React.useCallback(() => {
+    const menuPrice = menu.find(m => m.id_menu === formulario.id_menu)?.precio || 0;
+    const bebidaPrice = bebidas.find(b => b.id_bebida === formulario.id_bebida)?.precio || 0;
+    return Number(menuPrice) + Number(bebidaPrice);
+  }, [formulario.id_menu, formulario.id_bebida, menu, bebidas]);
+
+  // Actualiza el subtotal cuando cambian menú o bebida
+  useEffect(() => {
+    if (formulario.id_menu || formulario.id_bebida) {
+      const sum = getSelectedPrices();
+      setFormulario(prev => ({ ...prev, subtotal: sum }));
+    }
+  }, [formulario.id_menu, formulario.id_bebida, menu, bebidas, getSelectedPrices]);
+
 
   useEffect(() => {
     if (data) {
@@ -52,42 +82,26 @@ export default function FormIngresos({
   }, [data]);
 
   useEffect(() => {
-    getAreas();
-    getRooms();
-    getBrazalete();
+    getMesas();
+    getMenus();
+    getBebidas();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getAreas = async () => {
+  // Actualiza el total sumando los subtotales de todos los items agregados
+  useEffect(() => {
+    const total = comandaItems.reduce((acc, item) => acc + Number(item.subtotal || 0), 0);
+    setFormulario(prev => ({ ...prev, total }));
+  }, [comandaItems]);
+
+  const getMesas = async () => {
     const response = await listMarca();
-    if (response.valid) {
-      const filteredAreas = response.data.filter(
-        (item) => item.nombre !== "Restaurante"
-      );
-
-      setArea(filteredAreas);
-    } else {
-      enqueueSnackbar("Error al obtener las áreas.", {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "right",
-        },
-      });
-    }
-  };
-
-  const getRooms = async () => {
-    const response = await listHabitaciones();
     if (response.ok) {
-      // Convertir precio a número en cada habitación
-      const roomsNumericos = response.data.map((h) => ({
-        ...h,
-        precio: Number(h.precio),
-      }));
-      setRooms(roomsNumericos);
+      setMesa(response.data);
     } else {
-      enqueueSnackbar("Error al obtener las habitaciones.", {
+      enqueueSnackbar("Error al obtener las mesas.", {
+    // Array para los ítems agregados a la comanda
+   
         variant: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -97,12 +111,27 @@ export default function FormIngresos({
     }
   };
 
-  const getBrazalete = async () => {
-    const response = await lisBrazaletes();
-    if (response.valid) {
-      setBrazalete(response.data);
+  const getMenus = async () => {
+    const response = await listMesas();
+    if (response.ok) {
+      setMenu(response.data);
     } else {
-      enqueueSnackbar("Error al obtener los brazaletes.", {
+      enqueueSnackbar("Error al obtener las mesas.", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    }
+  };
+
+  const getBebidas = async () => {
+    const response = await listBebidas();
+    if (response.ok) {
+      setBebidas(response.data);
+    } else {
+      enqueueSnackbar("Error al obtener las bebidas.", {
         variant: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -115,94 +144,41 @@ export default function FormIngresos({
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    setFormulario((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleDescripcionChange = (e) => {
-    const value = e.target.value;
-    let precio = "";
-
-    if (formulario.idArea === 5) {
-      // Brazaletes
-      const seleccionado = brazalete.find((b) => b.tipo_brazalete === value);
-      precio = seleccionado ? Number(seleccionado.precio) : "";
-      const cantidad = Number(formulario.cantidad) || 1;
+    // If changing menu or bebida, update subtotal automatically
+    if (name === "id_menu" || name === "id_bebida") {
       setFormulario((prev) => ({
         ...prev,
-        descripcion: value,
-        precio: precio * cantidad,
+        [name]: value,
       }));
+      // Subtotal will be updated by useEffect above
     } else {
-      // Habitaciones
-      const seleccionado = rooms.find((r) => r.tipo_habitacion === value);
-      console.log("seleccionado habitaciones: ", seleccionado);
-      precio = seleccionado ? Number(seleccionado.precio) : "";
       setFormulario((prev) => ({
         ...prev,
-        descripcion: value,
-        precio: precio,
-        idHabitacion: seleccionado ? seleccionado.id_habitacion : "",
+        [name]: value,
       }));
     }
   };
 
-  const handleCantidadChange = (e) => {
-    const cantidad = Number(e.target.value) || 1;
-
-    if (formulario.idArea === 5 && formulario.descripcion) {
-      // Solo para brazaletes y si ya hay un tipo seleccionado
-      const seleccionado = brazalete.find(
-        (b) => b.tipo_brazalete === formulario.descripcion
-      );
-      const precioUnitario = seleccionado ? Number(seleccionado.precio) : 0;
-
-      setFormulario((prev) => ({
-        ...prev,
-        cantidad: e.target.value,
-        precio: precioUnitario * cantidad,
-      }));
-    } else {
-      setFormulario((prev) => ({
-        ...prev,
-        cantidad: e.target.value,
-      }));
-    }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Construir el array para enviar al backend
+    const comandaArray = comandaItems.map(item => ({
+      id_mesa: formulario.id_mesa,
+      id_menu: item.id_menu,
+      id_bebida: item.id_bebida,
+      subtotal: item.subtotal,
+      fecha: formulario.fecha,
+      observacion: formulario.observacion,
+      estado: formulario.estado,
+      total: formulario.total,
+      tipo_pago: formulario.tipo_pago,
+      // Puedes agregar más campos si lo necesitas
+    }));
 
-    if (!formulario.precio) {
-      enqueueSnackbar("Por favor complete todos los campos obligatorios.", {
-        variant: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "right",
-        },
-      });
-      return;
-    }
 
-    if(formulario.idArea === 7){
-    if (formulario.fechaFin === formulario.fechaInicio) {
-      enqueueSnackbar(
-        "La fecha de fin debe ser diferente a la fecha de inicio.",
-        {
-          variant: "error",
-        }
-      );
-      return;
-    }
-  }
-
-    if (data) {
-      fnEditar(formulario);
-    } else {
-      fnGuardar(formulario);
-    }
+    // Enviar el array al backend usando tu función de guardar
+    fnGuardar(comandaArray);
   };
 
   return (
@@ -217,283 +193,218 @@ export default function FormIngresos({
         <Grid container spacing={2} sx={{ marginBottom: 2 }}>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth variant="outlined">
-              <InputLabel id="area-label">Áreas</InputLabel>
+              <InputLabel id="mesa-label">Mesa</InputLabel>
               <Select
-                labelId="area-label"
-                id="idArea"
-                name="idArea"
+                labelId="mesa-label"
+                id="id_mesa"
+                name="id_mesa"
                 required
-                value={formulario.idArea}
-                placeholder="Seleccione un área"
+                value={formulario.id_mesa || ''}
                 onChange={handleInputChange}
-                label="Áreas"
+                label="Mesa"
                 variant="outlined"
               >
-                {area.map((area) => (
-                  <MenuItem key={area.id_area} value={area.id_area}>
-                    {area.nombre}
-                  </MenuItem>
+                {mesa.map(mesa => (
+                  <MenuItem key={mesa.id_mesa} value={mesa.id_mesa}>{mesa.nombre}</MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Grid>
-        </Grid>
-
-        {formulario.idArea === 5 ? (
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="area-label">Brazaletes</InputLabel>
-                <Select
-                  labelId="area-label"
-                  id="descripcion"
-                  name="descripcion"
-                  required
-                  value={formulario.descripcion}
-                  placeholder="Seleccione un Brazalete"
-                  onChange={handleDescripcionChange}
-                  label="Brazaletes"
-                  variant="outlined"
-                >
-                  {brazalete.map((brazalete) => (
-                    <MenuItem
-                      key={brazalete.id_brazalete}
-                      value={brazalete.tipo_brazalete}
-                    >
-                      {brazalete.tipo_brazalete}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="rol-label">Método de pago</InputLabel>
-                <Select
-                  labelId="rol-label"
-                  id="metodo"
-                  name="metodo"
-                  required
-                  value={formulario.metodo}
-                  onChange={handleInputChange}
-                  placeholder="Seleccione un método"
-                  label="Método"
-                  variant="outlined"
-                >
-                  <MenuItem value="Tarjeta">Tarjeta Débito / Crédito</MenuItem>
-                  <MenuItem value="Efectivo">Efectivo</MenuItem>
-                  <MenuItem value="Transferencia">Transferencia</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                id="precio"
-                name="precio"
-                label="Precio"
-                disabled
-                value={formulario.precio}
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="menu-label">Menú</InputLabel>
+              <Select
+                labelId="menu-label"
+                id="id_menu"
+                name="id_menu"
+                value={formulario.id_menu || ''}
                 onChange={handleInputChange}
+                label="Menú"
                 variant="outlined"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">Q</InputAdornment>
-                  ),
-                  //  endAdornment: (
-                  //   <InputAdornment position='end'>.00</InputAdornment>
-                  // ),
-                }}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                id="cantidad"
-                name="cantidad"
-                label="Cantidad"
-                type="number"
-                value={formulario.cantidad}
-                onChange={handleCantidadChange}
-                variant="outlined"
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="estado-label">Estado</InputLabel>
-                <Select
-                  labelId="estado-label"
-                  id="estado"
-                  name="estado"
-                  required
-                  value={formulario.estado}
-                  onChange={handleInputChange}
-                  label="Estado"
-                >
-                  <MenuItem value={1}>Activo</MenuItem>
-                  <MenuItem value={0}>Inactivo</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
+              >
+                {menu.map(menu => (
+                  <MenuItem key={menu.id_menu} value={menu.id_menu}>{menu.descripcion}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
-        ) : (
-          <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="bebida-label">Bebida</InputLabel>
+              <Select
+                labelId="bebida-label"
+                id="id_bebida"
+                name="id_bebida"
+                value={formulario.id_bebida || ''}
+                onChange={handleInputChange}
+                label="Bebida"
+                variant="outlined"
+              >
+                {bebidas.map(bebida => (
+                  <MenuItem key={bebida.id_bebida} value={bebida.id_bebida}>{bebida.descripcion}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              id="subtotal"
+              name="subtotal"
+              label="Subtotal"
+              disabled={formulario.id_menu || formulario.id_bebida ? false : true}
+              value={formulario.subtotal || ''}
+              onChange={handleInputChange}
+              variant="outlined"
+              type="number"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              id="fecha"
+              name="fecha"
+              label="Fecha"
+              value={formulario.fecha || ''}
+              onChange={handleInputChange}
+              variant="outlined"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              id="observacion"
+              name="observacion"
+              label="Observación"
+              value={formulario.observacion || ''}
+              onChange={handleInputChange}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="estado-label">Estado</InputLabel>
+              <Select
+                labelId="estado-label"
+                id="estado"
+                name="estado"
+                required
+                value={formulario.estado || ''}
+                onChange={handleInputChange}
+                label="Estado"
+                variant="outlined"
+              >
+                <MenuItem value="En Preparación">En Preparación</MenuItem>
+                <MenuItem value="Listo">Listo</MenuItem>
+                <MenuItem value="Pagado">Pagado</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              id="total"
+              name="total"
+              label="Total"
+              disabled
+              value={formulario.total || ''}
+              onChange={handleInputChange}
+              variant="outlined"
+              type="number"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="tipo-pago-label">Tipo de pago</InputLabel>
+              <Select
+                labelId="tipo-pago-label"
+                id="tipo_pago"
+                name="tipo_pago"
+                required
+                value={formulario.tipo_pago || ''}
+                onChange={handleInputChange}
+                label="Tipo de pago"
+                variant="outlined"
+              >
+                <MenuItem value="Tarjeta">Tarjeta Débito / Crédito</MenuItem>
+                <MenuItem value="Efectivo">Efectivo</MenuItem>
+                <MenuItem value="Transferencia">Transferencia</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+
+      {/* Agregar button for adding items to comandaItems */}
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="area-label">Habitaciones</InputLabel>
-                <Select
-                  labelId="area-label"
-                  id="descripcion"
-                  name="descripcion"
-                  required
-                  value={formulario.descripcion}
-                  placeholder="Seleccione un Habitaciones"
-                  onChange={handleDescripcionChange}
-                  label="Habitaciones"
-                  variant="outlined"
-                >
-                  {rooms
-                    .filter((disponible) => disponible.disponible === 1)
-                    .map((habitacion) => (
-                      <MenuItem
-                        key={habitacion.id_habitacion}
-                        value={habitacion.tipo_habitacion}
-                      >
-                        {habitacion.tipo_habitacion +
-                          " #" +
-                          habitacion.numero_habitacion}
-                      </MenuItem>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  if (formulario.id_menu || formulario.id_bebida) {
+                    setComandaItems(prev => [
+                      ...prev,
+                      {
+                        id_menu: formulario.id_menu,
+                        menu_desc: menu.find(m => m.id_menu === formulario.id_menu)?.descripcion || '',
+                        id_bebida: formulario.id_bebida,
+                        bebida_desc: bebidas.find(b => b.id_bebida === formulario.id_bebida)?.descripcion || '',
+                        subtotal: formulario.subtotal || 0,
+                      }
+                    ]);
+                    setFormulario(prev => ({ ...prev, id_menu: '', id_bebida: '', subtotal: '' }));
+                  }
+                }}
+                sx={{ mt: 2 }}
+              >
+                Agregar
+              </Button>
+            </Grid>
+
+          {/* Table for comandaItems */}
+          {comandaItems.length > 0 && (
+            <Grid item xs={12}>
+              <TableContainer component={Paper} sx={{ mt: 2 }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Menú</TableCell>
+                      <TableCell>Bebida</TableCell>
+                      <TableCell>Subtotal</TableCell>
+                      <TableCell>Acciones</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {comandaItems.map((item, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell>{item.menu_desc}</TableCell>
+                        <TableCell>{item.bebida_desc}</TableCell>
+                        <TableCell>{item.subtotal}</TableCell>
+                        <TableCell>
+                          <IconButton color="error" onClick={() => {
+                            setComandaItems(prev => prev.filter((_, i) => i !== idx));
+                          }}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                </Select>
-              </FormControl>
+                    <TableRow>
+                      <TableCell colSpan={2} align="right"><b>Total</b></TableCell>
+                      <TableCell colSpan={2}>
+                        {comandaItems.reduce((acc, item) => acc + Number(item.subtotal || 0), 0)}
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="rol-label">Método de pago</InputLabel>
-                <Select
-                  labelId="rol-label"
-                  id="metodo"
-                  name="metodo"
-                  required
-                  value={formulario.metodo}
-                  onChange={handleInputChange}
-                  placeholder="Seleccione un método"
-                  label="Método"
-                  variant="outlined"
-                >
-                  <MenuItem value="Tarjeta">Tarjeta Débito / Crédito</MenuItem>
-                  <MenuItem value="Efectivo">Efectivo</MenuItem>
-                  <MenuItem value="Transferencia">Transferencia</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                disabled
-                id="precio"
-                name="precio"
-                label="Precio"
-                value={formulario.precio}
-                onChange={handleInputChange}
-                variant="outlined"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">Q</InputAdornment>
-                  ),
-                  // endAdornment: (
-                  //   <InputAdornment position='end'>.00</InputAdornment>
-                  // ),
-                }}
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="estado-label">Estado</InputLabel>
-                <Select
-                  labelId="estado-label"
-                  id="estado"
-                  name="estado"
-                  required
-                  value={formulario.estado}
-                  onChange={handleInputChange}
-                  label="Estado"
-                >
-                  <MenuItem value={1}>Activo</MenuItem>
-                  <MenuItem value={0}>Inactivo</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                id="fechaInicio"
-                name="fechaInicio"
-                label={`Fecha de Ingreso `}
-                value={formulario.fechaInicio}
-                onChange={handleInputChange}
-                placeholder="Fecha de Ingreso"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                inputProps={{
-                  min: new Date().toISOString().split("T")[0],
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-                required
-                fullWidth
-                id="fechaFin"
-                name="fechaFin"
-                label={`Fecha de Salida `}
-                value={formulario.fechaFin}
-                onChange={handleInputChange}
-                placeholder="Fecha de Salida"
-                variant="outlined"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                inputProps={{
-                  min:
-                    formulario.fechaInicio ||
-                    new Date().toISOString().split("T")[0],
-                }}
-              />
-            </Grid>
-          </Grid>
-        )}
+          )}
+         
+        </Grid>
       </Paper>
 
-      <Typography
-        variant="body2"
-        sx={{
-          color: (theme) => theme.palette.text.disabled,
-          m: 2,
-          fontStyle: "italic",
-        }}
-      >
-        {formulario.idArea === 7
-          ? `Hotel seleccionado: ${formulario.descripcion} - Precio: Q. ${formulario.precio} por noche.` 
-          : `Brazalete seleccionado: ${formulario.descripcion} - Precio: Q. ${formulario.precio} por cantidad y precio.`}
-        {" | Recuerda que el precio es automático."}
-      </Typography>
+    
 
       <Box display="flex" justifyContent="center" mt={2}>
         <Button
@@ -518,6 +429,7 @@ export default function FormIngresos({
           color="primary"
           type="submit"
           sx={{ mx: 1 }}
+          disabled={comandaItems.length === 0}
         >
           GUARDAR
         </Button>

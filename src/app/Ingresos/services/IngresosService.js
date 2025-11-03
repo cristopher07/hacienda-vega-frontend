@@ -54,7 +54,6 @@ export const editIngreso = async (obj) => {
 };
 
 export const deleteIngreso = async (id) => {
-    console.log("id---: ", id);
     try {
         let obj = {
             id_ingreso: id

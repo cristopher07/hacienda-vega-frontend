@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Snackbar } from "@mui/material";
 import MainLayout from "../components/layout/MainLayout";
@@ -7,6 +6,10 @@ import Confirmation from "../components/modulesComponents/Confirmation";
 import { getMesaByQuery } from "../mesas/services/mesaService";
 import VistaComandas from "./vistaComandas";
 import ComandasFilter from "./comandasFilter";
+import ComandasForm from "./comandasForm";
+import { useSnackbar } from "notistack";
+import { addComanda, getComandas } from "./services/comandasService";
+import TablaComandas from "./TablaComandas"; // crea este componente si no existe
 
 export default function Comandas() {
   const [title] = useState("COMANDAS");
@@ -23,13 +26,20 @@ export default function Comandas() {
     message: "",
     alertType: "info",
   });
+  const [selectedData, setSelectedData] = useState(null);
+  const [verTablaComandas, setVerTablaComandas] = useState(true);
+  const [dataComandas, setDataComandas] = useState([]);
+  console.log("dataaaaComandas: ", dataComandas);
+  const [rowsPerPageComandas, setRowsPerPageComandas] = useState(10);
+  const [pageFixComandas, setpageFixComandas] = useState(0);
+  const { enqueueSnackbar } = useSnackbar();
 
   const cargarMesas = async (busqueda) => {
     setLoading(true);
     let objResponse = await getMesaByQuery(busqueda, rowsPerPage, pageFix, "");
     if (objResponse.valid) {
       setMesas(objResponse.data);
-      setMesasFiltradas(objResponse.data); // por defecto muestra todas
+      setMesasFiltradas(objResponse.data);
     } else {
       setMesas([]);
       setMesasFiltradas([]);
@@ -42,11 +52,31 @@ export default function Comandas() {
     setLoading(false);
   };
 
+  const cargarComandas = async () => {
+    let objResponse = await getComandas(
+      "",
+      rowsPerPageComandas,
+      pageFixComandas,
+      ""
+    );
+    if (objResponse.ok) {
+      setDataComandas(objResponse.data);
+      setVerTablaComandas(false);
+    } else {
+      setDataComandas([]);
+      setAlertMensaje({
+        open: true,
+        message: objResponse.message || "No se encontraron menús.",
+        alertType: "warning",
+      });
+    }
+  };
+
   const onFiltrarTipo = (tipo) => {
     if (tipo === "Todos") {
       setMesasFiltradas(mesas);
     } else {
-      setMesasFiltradas(mesas.filter(m => m.tipo_de_mesa === tipo));
+      setMesasFiltradas(mesas.filter((m) => m.tipo_de_mesa === tipo));
     }
   };
 
@@ -54,6 +84,67 @@ export default function Comandas() {
     cargarMesas(buscar);
     // eslint-disable-next-line
   }, [buscar, rowsPerPage, pageFix]);
+
+  useEffect(() => {
+    cargarComandas();
+    // eslint-disable-next-line
+  }, [rowsPerPageComandas, pageFixComandas]);
+
+  /**
+   * AGREGAR LAS COMANDAS NUEVAS.
+   *
+   * @param {Array} comandaArray Array de objetos de comandas.
+   * @public
+   */
+  const addIngreso = async (comandaArray) => {
+    for (const obj of comandaArray) {
+      let objRespuesta = await addComanda({
+        ...obj,
+      });
+ console.log("objRespuestaaaa: ", objRespuesta);
+      if (objRespuesta.success) {
+       
+        enqueueSnackbar("Se agregó correctamente la comanda.", {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "right",
+          },
+        });
+        setVerForm(false);
+      } else {
+        enqueueSnackbar(objRespuesta.msg || "Error al crear la comanda.", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "right",
+          },
+        });
+        setVerForm(false);
+      }
+    }
+  };
+
+  // Esta función será llamada desde el botón
+  window.mostrarTablaComandas = () => setVerTablaComandas(true);
+
+  // Columnas para la tabla de comandas
+  const columnsComandas = [
+    { id: "id_comanda", label: "ID" },
+    { id: "nombreMesa", label: "Mesa" },
+    { id: "nombreMenu", label: "Menú" },
+    { id: "nombreBebida", label: "Bebida" },
+    { id: "subtotal", label: "Subtotal" },
+    { id: "fecha", label: "Fecha" },
+    { id: "observacion", label: "Observación" },
+    { id: "estado", label: "Estado" },
+    { id: "total", label: "Total" },
+    { id: "tipo_pago", label: "Tipo de pago" },
+  ];
+
+  const toggleTablaComandas = () => {
+    setVerTablaComandas((prev) => !prev);
+  };
 
   return (
     <MainLayout
@@ -84,8 +175,26 @@ export default function Comandas() {
                 setVerForm={setVerForm}
                 mesas={mesas}
                 onFiltrarTipo={onFiltrarTipo}
+                toggleTablaComandas={toggleTablaComandas}
+                mostrarTablaComandas={verTablaComandas}
               />
-              <VistaComandas mesas={mesasFiltradas} loading={loading} />
+                <VistaComandas 
+                mesas={mesasFiltradas} 
+                loading={loading} 
+                dataComandas={dataComandas} 
+                />
+              {verTablaComandas && (
+                <TablaComandas
+                  data={dataComandas}
+                  columns={columnsComandas}
+                  rowsPerPage={rowsPerPageComandas}
+                  setRowsPerPage={setRowsPerPageComandas}
+                  count={dataComandas[0]?.count || 0}
+                  pageFix={pageFixComandas}
+                  setpageFix={setpageFixComandas}
+                  onCerrar={toggleTablaComandas}
+                />
+              )}
               <Snackbar
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 open={alertMessage.open}
@@ -106,7 +215,19 @@ export default function Comandas() {
               </Snackbar>
             </>
           ) : (
-            <div>Formulario para crear comanda (próximamente)</div>
+            <div>
+              <ComandasForm
+                onCancelar={() => {
+                  setVerForm(false);
+                  setSelectedData(null);
+                }}
+                // fnEditar={edit}
+                fnGuardar={addIngreso}
+                data={selectedData}
+                setData={setSelectedData}
+                enqueueSnackbar={enqueueSnackbar}
+              />
+            </div>
           )}
         </>
       }

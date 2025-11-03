@@ -24,6 +24,16 @@ export const listMarca = async () => {
     }
 };
 
+export const listMesas = async () => {
+    const urlMarcas = '/menus/all';
+    try {
+      let respuesta = await axios.get(URL + urlMarcas + '?paginacion=0');
+      return respuesta.data;
+    } catch (error) {
+      return error;
+    }
+};
+
 export const getMenuByQuery = async (obj, rowsPerPage, pageFix, pagination) => {
     try {
        const response = await axios.get(URL+`/menus/query?busqueda=${obj}&rowsPerPage=${rowsPerPage}&page=${pageFix}&paginacion=${pagination}`)

@@ -24,6 +24,16 @@ export const listMarca = async () => {
     }
 };
 
+export const listBebidas= async () => {
+    const urlMarcas = '/bebidas/all';
+    try {
+      let respuesta = await axios.get(URL + urlMarcas + '?paginacion=0');
+      return respuesta.data;
+    } catch (error) {
+      return error;
+    }
+};
+
 export const getBebidaByQuery = async (obj, rowsPerPage, pageFix, pagination) => {
     try {
        const response = await axios.get(URL+`/bebidas/query?busqueda=${obj}&rowsPerPage=${rowsPerPage}&page=${pageFix}&paginacion=${pagination}`)

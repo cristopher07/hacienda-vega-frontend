@@ -3,12 +3,12 @@ import axios from 'axios';
 //// URL ROOT
 const URL = process.env.REACT_APP_BACKEND_BASE;
 
-export const getIngresos = async (obj, rowsPerPage, pageFix, pagination = 1) => {
+export const getComandas = async (obj, rowsPerPage, pageFix, pagination = 1) => {
     try {
-       const response = await axios.get(URL+`/ingresos/all?busqueda=${obj}&rowsPerPage=${rowsPerPage}&page=${pageFix}&paginacion=${pagination}`)
+       const response = await axios.get(URL+`/comandas/query?busqueda=${obj}&rowsPerPage=${rowsPerPage}&page=${pageFix}&paginacion=${pagination}`)
         return response.data;
     } catch (error) {
-        console.error("Error fetching ingreso:", error);
+        console.error("Error fetching comanda:", error);
         throw error;
     }
 };
@@ -34,35 +34,12 @@ export const getIngresoByQuery = async (obj, rowsPerPage, pageFix, pagination) =
     }
 };
 
-export const createIngreso = async (obj) => {
+export const addComanda = async (obj) => {
     try {
-        const response = await axios.post(URL + '/ingresos/add', obj);
+        const response = await axios.post(URL + '/comandas/add', obj);
         return response.data;
     } catch (error) {
         throw error;
     }
 }
 
-export const editIngreso = async (obj) => {
-    try {
-        const response = await axios.post(URL + `/ingresos/Update/${obj.id_ingreso}`, obj);
-        return response.data;
-    } catch (error) {
-        console.error("Error editing ingreso:", error);
-        throw error;
-    }
-};
-
-export const deleteIngreso = async (id) => {
-    console.log("id---: ", id);
-    try {
-        let obj = {
-            id_ingreso: id
-        };
-        const response = await axios.post(URL +  `/ingresos/Delete/${id}`,obj);
-        return response.data;
-    } catch (error) {
-        console.error("Error deleting ingreso:", error);
-        throw error;
-    }
-};

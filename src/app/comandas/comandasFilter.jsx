@@ -9,8 +9,9 @@ import {
   ToggleButtonGroup,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import ListIcon from '@mui/icons-material/List';
 
-export default function ComandasFilter({ setVerForm, onFiltrarTipo }) {
+export default function ComandasFilter({ setVerForm, onFiltrarTipo, toggleTablaComandas, mostrarTablaComandas }) {
   const [tipoFiltro, setTipoFiltro] = useState('Todos');
 
   const handleNuevo = () => {
@@ -45,20 +46,28 @@ const toggleButtonSx = {
         onChange={handleFiltroChange}
         sx={{ marginRight: 2 }}
       >
-  <ToggleButton value="Todos" sx={toggleButtonSx}>Todos</ToggleButton>
-  <ToggleButton value="Mesa" sx={toggleButtonSx}>Mesa</ToggleButton>
-  <ToggleButton value="Rancho" sx={toggleButtonSx}>Rancho</ToggleButton>
+        <ToggleButton value="Todos" sx={toggleButtonSx}>Todos</ToggleButton>
+        <ToggleButton value="Mesa" sx={toggleButtonSx}>Mesa</ToggleButton>
+        <ToggleButton value="Rancho" sx={toggleButtonSx}>Rancho</ToggleButton>
       </ToggleButtonGroup>
-      <Box sx={{ marginLeft: 2 }}>
+      <Box sx={{ marginLeft: 2, display: 'flex', gap: 2 }}>
         <Fab
           title="Agregar Nueva Comanda"
           onClick={handleNuevo}
           color="primary"
           aria-label="add"
           size="medium"
-          tooltip
         >
           <AddIcon />
+        </Fab>
+        <Fab
+          title={mostrarTablaComandas ? "Ocultar Comandas" : "Ver Comandas"}
+          onClick={toggleTablaComandas}
+          color={mostrarTablaComandas ? "secondary" : "primary"}
+          aria-label="list"
+          size="medium"
+        >
+          <ListIcon />
         </Fab>
       </Box>
     </div>

@@ -34,7 +34,6 @@ export default function FormSolicitudes({
     estado: "",
     fecha_revision: "",
   });
-  console.log("formulario: ", formulario);
   const [areas, setAreas] = useState([]);
   const [usuario, setUsuario] = useState([]);
   const [observacionLength, setObservacionLength] = useState(

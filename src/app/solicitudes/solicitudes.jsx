@@ -21,7 +21,6 @@ export default function Solicitudes() {
 
   /** Variable para el manejo de la información de la tabla */
   const [data, setData] = useState([]);
-  console.log("dataa: ", data);
 
   /** Variable para la seleccion del objeto en la Row*/
   const [selectedData, setSelectedData] = useState();
@@ -139,7 +138,6 @@ export default function Solicitudes() {
    * @public
    */
   const deleteSolicitud = async (index) => {
-    console.log("index: ", index);
     let objRespuesta = await deleteSolicitudes(
       index.id_solicitud,
     );

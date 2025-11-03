@@ -24,10 +24,13 @@ export default function VistaComandas({ mesas, loading, dataComandas }) {
         if (c.nombreMenu != null) campos.push(`Menú: ${c.nombreMenu}`);
         if (c.nombreBebida != null) campos.push(`Bebida: ${c.nombreBebida}`);
         if (c.subtotal != null) campos.push(`Subtotal: ${c.subtotal}`);
-        if (c.total != null) campos.push(`Total General: ${c.total}`);
-        else if (c.subtotal != null) campos.push(`Total General: ${c.subtotal}`);
         return campos.join('\n');
       }).join("\n---\n");
+      // Mostrar el campo 'Total General' solo una vez al final, usando el valor de la última comanda
+      const ultimoTotal = comandasMesa[comandasMesa.length - 1]?.total;
+      if (ultimoTotal != null) {
+        content += `\n\nTotal General: ${ultimoTotal}`;
+      }
     } else {
       content = "Sin comandas recientes";
     }

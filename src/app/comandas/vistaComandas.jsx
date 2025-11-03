@@ -19,7 +19,15 @@ export default function VistaComandas({ mesas, loading, dataComandas }) {
     const comandasMesa = (dataComandas || []).filter(c => c.id_mesa === mesa.id_mesa);
     let content = "";
     if (comandasMesa.length > 0) {
-      content = comandasMesa.map(c => `Menú: ${c.nombreMenu}\nBebida: ${c.nombreBebida}\nSubtotal: ${c.subtotal}\nTotal General: ${c.total ?? c.subtotal}`).join("\n---\n");
+      content = comandasMesa.map(c => {
+        let campos = [];
+        if (c.nombreMenu != null) campos.push(`Menú: ${c.nombreMenu}`);
+        if (c.nombreBebida != null) campos.push(`Bebida: ${c.nombreBebida}`);
+        if (c.subtotal != null) campos.push(`Subtotal: ${c.subtotal}`);
+        if (c.total != null) campos.push(`Total General: ${c.total}`);
+        else if (c.subtotal != null) campos.push(`Total General: ${c.subtotal}`);
+        return campos.join('\n');
+      }).join("\n---\n");
     } else {
       content = "Sin comandas recientes";
     }

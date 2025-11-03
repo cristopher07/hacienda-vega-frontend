@@ -29,7 +29,6 @@ export default function Comandas() {
   const [selectedData, setSelectedData] = useState(null);
   const [verTablaComandas, setVerTablaComandas] = useState(true);
   const [dataComandas, setDataComandas] = useState([]);
-  console.log("dataaaaComandas: ", dataComandas);
   const [rowsPerPageComandas, setRowsPerPageComandas] = useState(10);
   const [pageFixComandas, setpageFixComandas] = useState(0);
   const { enqueueSnackbar } = useSnackbar();

@@ -55,6 +55,7 @@ export default function ComandasForm({
     estado: 1,
     ...data,
   });
+  console.log("formulario: ", formulario);
 
 
   const getSelectedPrices = React.useCallback(() => {
@@ -97,7 +98,9 @@ export default function ComandasForm({
   const getMesas = async () => {
     const response = await listMarca();
     if (response.ok) {
-      setMesa(response.data);
+     const data  = response.data.filter(m => m.estado === 'Disponible');
+     console.log("data: ", data);
+      setMesa(data);
     } else {
       enqueueSnackbar("Error al obtener las mesas.", {
     // Array para los ítems agregados a la comanda
@@ -259,7 +262,7 @@ export default function ComandasForm({
               type="number"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          {/* <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
               id="fecha"
@@ -271,7 +274,7 @@ export default function ComandasForm({
               type="date"
               InputLabelProps={{ shrink: true }}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
@@ -283,25 +286,7 @@ export default function ComandasForm({
               variant="outlined"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth variant="outlined">
-              <InputLabel id="estado-label">Estado</InputLabel>
-              <Select
-                labelId="estado-label"
-                id="estado"
-                name="estado"
-                required
-                value={formulario.estado || ''}
-                onChange={handleInputChange}
-                label="Estado"
-                variant="outlined"
-              >
-                <MenuItem value="En Preparación">En Preparación</MenuItem>
-                <MenuItem value="Listo">Listo</MenuItem>
-                <MenuItem value="Pagado">Pagado</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
+     
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
@@ -333,6 +318,26 @@ export default function ComandasForm({
                 <MenuItem value="Transferencia">Transferencia</MenuItem>
               </Select>
             </FormControl>
+          </Grid>
+
+               <Grid item xs={12} sm={6}>
+            {/* <FormControl fullWidth variant="outlined">
+              <InputLabel id="estado-label">Estado</InputLabel>
+              <Select
+                labelId="estado-label"
+                id="estado"
+                name="estado"
+                required
+                value={formulario.estado || ''}
+                onChange={handleInputChange}
+                label="Estado"
+                variant="outlined"
+              >
+                <MenuItem value="En Preparación">En Preparación</MenuItem>
+                <MenuItem value="Listo">Listo</MenuItem>
+                <MenuItem value="Pagado">Pagado</MenuItem>
+              </Select>
+            </FormControl> */}
           </Grid>
 
       {/* Agregar button for adding items to comandaItems */}

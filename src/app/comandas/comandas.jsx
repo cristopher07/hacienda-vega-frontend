@@ -10,6 +10,9 @@ import ComandasForm from "./comandasForm";
 import { useSnackbar } from "notistack";
 import { addComanda, getComandas } from "./services/comandasService";
 import TablaComandas from "./TablaComandas"; // crea este componente si no existe
+import dayjs from "dayjs";
+
+
 
 export default function Comandas() {
   const [title] = useState("COMANDAS");
@@ -29,6 +32,7 @@ export default function Comandas() {
   const [selectedData, setSelectedData] = useState(null);
   const [verTablaComandas, setVerTablaComandas] = useState(true);
   const [dataComandas, setDataComandas] = useState([]);
+  console.log("dataComandas: ", dataComandas);
   const [rowsPerPageComandas, setRowsPerPageComandas] = useState(10);
   const [pageFixComandas, setpageFixComandas] = useState(0);
   const { enqueueSnackbar } = useSnackbar();
@@ -134,7 +138,13 @@ export default function Comandas() {
     { id: "nombreMenu", label: "Menú" },
     { id: "nombreBebida", label: "Bebida" },
     { id: "subtotal", label: "Subtotal" },
-    { id: "fecha", label: "Fecha" },
+    {
+      id: "fecha",
+      label: "Fecha",
+      render: (row) => {
+        return row.fecha ? dayjs(row.fecha).subtract(6, 'hour').format("DD/MM/YYYY HH:mm") : "";
+      }
+    },
     { id: "observacion", label: "Observación" },
     { id: "estado", label: "Estado" },
     { id: "total", label: "Total" },

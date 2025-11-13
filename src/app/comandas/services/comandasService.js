@@ -43,3 +43,15 @@ export const addComanda = async (obj) => {
     }
 }
 
+
+export const updateComandaStates = async (obj) => {
+    console.log("---obj update comanda: ", obj);
+    try {
+        const response = await axios.post(URL + '/comandas/update-state', obj);        
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+

@@ -35,7 +35,8 @@ export default function ComandasForm({
   data,
   titulo = "",
   enqueueSnackbar,
-}) {
+  onUpdate,
+  }) {
   const [mesa, setMesa] = useState([]);
   const [menu, setMenu] = useState([]);
   const [bebidas, setBebidas] = useState([]);
@@ -182,6 +183,7 @@ export default function ComandasForm({
 
     // Enviar el array al backend usando tu función de guardar
     fnGuardar(comandaArray);
+    if (typeof onUpdate === "function") onUpdate();
   };
 
   return (

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { updateComandaStates } from "./services/comandasService";
 import {
   Box,
   Grid,
@@ -21,18 +22,21 @@ function getStatusColor(status) {
   return statusColors[status] || "#E0E0E0";
 }
 
-export default function VistaComandas({ mesas, loading, dataComandas }) {
+export default function VistaComandas({ mesas, loading, dataComandas, onUpdate }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [popoverContent, setPopoverContent] = useState("");
   const [mesaActual, setMesaActual] = useState(null);
 
   const handlePopoverOpen = (event, mesa) => {
     setMesaActual(mesa);
-    const comandasMesa = (dataComandas || []).filter(
-      (c) => c.id_mesa === mesa.id_mesa
+    // Solo mostrar comandas activas (no finalizadas) y solo si la mesa no está disponible
+    let comandasMesa = (dataComandas || []).filter(
+      (c) => c.id_mesa === mesa.id_mesa && c.estado !== "Finalizada"
     );
     let content = "";
-    if (comandasMesa.length > 0) {
+    if (mesa.estado === "Disponible" || comandasMesa.length === 0) {
+      content = "Sin comandas recientes";
+    } else {
       content = comandasMesa
         .map((c) => {
           let campos = [];
@@ -42,13 +46,10 @@ export default function VistaComandas({ mesas, loading, dataComandas }) {
           return campos.join("\n");
         })
         .join("\n---\n");
-      // Mostrar el campo 'Total General' solo una vez al final, usando el valor de la última comanda
       const ultimoTotal = comandasMesa[comandasMesa.length - 1]?.total;
       if (ultimoTotal != null) {
         content += `\n\nTotal General: ${ultimoTotal}`;
       }
-    } else {
-      content = "Sin comandas recientes";
     }
     setPopoverContent(content);
     setAnchorEl(event.currentTarget);
@@ -60,7 +61,25 @@ export default function VistaComandas({ mesas, loading, dataComandas }) {
     setMesaActual(null);
   };
 
+
   const open = Boolean(anchorEl);
+
+  // Función para actualizar estados en el backend
+  const actualizarEstados = async (mesa, comandas, nuevoEstadoComanda, nuevoEstadoMesa) => {
+    try {
+      const idsComandas = comandas.map(c => c.id_comanda);
+      console.log("...idsComandas: ", idsComandas);
+      await updateComandaStates({
+        ids: idsComandas,
+        estado: nuevoEstadoComanda,
+        id_mesa: mesa.id_mesa,
+        estado_mesa: nuevoEstadoMesa
+      });
+      console.log('Estados actualizados correctamente');
+    } catch (error) {
+      console.error('Error actualizando estados:', error);
+    }
+  };
 
   return (
     <Box sx={{ p: 1, marginTop: 3, maxWidth: 1200, mx: "auto" }}>
@@ -117,19 +136,18 @@ export default function VistaComandas({ mesas, loading, dataComandas }) {
                       variant="contained"
                       color={mesa.estado === "Ocupada" ? "warning" : "success"}
                       size="small"
-                       sx={{ top: 0.1 }}
-                      onClick={(e) => {
+                      sx={{ top: 0.1 }}
+                      onClick={async (e) => {
+                        const comandasMesa = dataComandas.filter((c) => c.id_mesa === mesa.id_mesa);
                         if (mesa.estado === "Ocupada") {
-                          console.log("Cambiar estado mesa a Pedido listo: ", mesa.id_mesa);
-                        } else {
-                          console.log("Cambiar estado mesa a Pagado: ", mesa.id_mesa);
+                          await actualizarEstados(mesa, comandasMesa, "Listo", "Pedido listo");
+                        } else if (mesa.estado === "Pedido listo") {
+                          await actualizarEstados(mesa, comandasMesa, "Pagado", "Disponible");
                         }
+                        if (typeof onUpdate === "function") onUpdate();
                       }}
                     >
-                      {mesa.estado === "Ocupada"
-                        ? "Pedido listo"
-                        : "Pagado"
-                      }
+                      {mesa.estado === "Ocupada" ? "Pedido listo" : "Pagado"}
                     </Button>
                   )}
 

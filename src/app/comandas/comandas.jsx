@@ -12,8 +12,6 @@ import { addComanda, getComandas } from "./services/comandasService";
 import TablaComandas from "./TablaComandas"; // crea este componente si no existe
 import dayjs from "dayjs";
 
-
-
 export default function Comandas() {
   const [title] = useState("COMANDAS");
   const [subTitle] = useState(`Gestión de Comandas`);
@@ -64,7 +62,7 @@ export default function Comandas() {
     );
     if (objResponse.ok) {
       setDataComandas(objResponse.data);
-      setVerTablaComandas(false);
+      // setVerTablaComandas(false);
     } else {
       setDataComandas([]);
       setAlertMensaje({
@@ -99,14 +97,13 @@ export default function Comandas() {
    * @param {Array} comandaArray Array de objetos de comandas.
    * @public
    */
-  const addIngreso = async (comandaArray) => {
+  const addIngreso = async (comandaArray, onUpdate) => {
     for (const obj of comandaArray) {
       let objRespuesta = await addComanda({
         ...obj,
       });
- console.log("objRespuestaaaa: ", objRespuesta);
+      console.log("objRespuestaaaa: ", objRespuesta);
       if (objRespuesta.success) {
-       
         enqueueSnackbar("Se agregó correctamente la comanda.", {
           variant: "success",
           anchorOrigin: {
@@ -114,7 +111,6 @@ export default function Comandas() {
             horizontal: "right",
           },
         });
-        setVerForm(false);
       } else {
         enqueueSnackbar(objRespuesta.msg || "Error al crear la comanda.", {
           variant: "error",
@@ -123,9 +119,10 @@ export default function Comandas() {
             horizontal: "right",
           },
         });
-        setVerForm(false);
       }
     }
+    setVerForm(false);
+    if (typeof onUpdate === "function") onUpdate();
   };
 
   // Esta función será llamada desde el botón
@@ -142,8 +139,10 @@ export default function Comandas() {
       id: "fecha",
       label: "Fecha",
       render: (row) => {
-        return row.fecha ? dayjs(row.fecha).subtract(6, 'hour').format("DD/MM/YYYY HH:mm") : "";
-      }
+        return row.fecha
+          ? dayjs(row.fecha).subtract(6, "hour").format("DD/MM/YYYY HH:mm")
+          : "";
+      },
     },
     { id: "observacion", label: "Observación" },
     { id: "estado", label: "Estado" },
@@ -187,11 +186,15 @@ export default function Comandas() {
                 toggleTablaComandas={toggleTablaComandas}
                 mostrarTablaComandas={verTablaComandas}
               />
-                <VistaComandas 
-                mesas={mesasFiltradas} 
-                loading={loading} 
-                dataComandas={dataComandas} 
-                />
+              <VistaComandas
+                mesas={mesasFiltradas}
+                loading={loading}
+                dataComandas={dataComandas}
+                onUpdate={() => {
+                  cargarMesas(buscar);
+                  cargarComandas();
+                }}
+              />
               {verTablaComandas && (
                 <TablaComandas
                   data={dataComandas}
@@ -231,10 +234,17 @@ export default function Comandas() {
                   setSelectedData(null);
                 }}
                 // fnEditar={edit}
-                fnGuardar={addIngreso}
+                fnGuardar={(comandaArray) => addIngreso(comandaArray, () => {
+                  cargarMesas(buscar);
+                  cargarComandas();
+                })}
                 data={selectedData}
                 setData={setSelectedData}
                 enqueueSnackbar={enqueueSnackbar}
+                onUpdate={() => {
+                  cargarMesas(buscar);
+                  cargarComandas();
+                }}
               />
             </div>
           )}

@@ -21,25 +21,27 @@ import {
   LocalActivity,
 } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
+import { getModulosPermitidos } from "../../utils/auth";
 import { Tooltip } from "@mui/material";
 
 const menuItems = [
-  { text: "Áreas", icon: <Domain />, path: "/app/areas" },
-  { text: "Usuarios", icon: <Person />, path: "/app/usuarios" },
-  { text: "Inventarios", icon: <Inventory2 />, path: "/app/inventarios" },
-  { text: "Solicitudes", icon: <Assignment />, path: "/app/solicitudes" }, //nuevo icono como para una solicitud
-  { text: "Bebidas", icon: <Liquor />, path: "/app/bebidas" },
-  { text: "Mesas", icon: <TableBar />, path: "/app/mesas" },
-  { text: "Menús", icon: <Fastfood />, path: "/app/menus" },
-  { text: "Habitaciones", icon: <RoomService />, path: "/app/habitaciones" },
-  { text: "Ingresos", icon: <AttachMoney />, path: "/app/ingresos" },
-  { text: "Brazaletes", icon: <LocalActivity />, path: "/app/brazaletes" },
-  { text: "Comandas", icon: <Assignment />, path: "/app/comandas" }, // <-- Nueva opción
-
+  { key: "areas", text: "Áreas", icon: <Domain />, path: "/app/areas" },
+  { key: "usuarios", text: "Usuarios", icon: <Person />, path: "/app/usuarios" },
+  { key: "inventarios", text: "Inventarios", icon: <Inventory2 />, path: "/app/inventarios" },
+  { key: "solicitudes", text: "Solicitudes", icon: <Assignment />, path: "/app/solicitudes" },
+  { key: "bebidas", text: "Bebidas", icon: <Liquor />, path: "/app/bebidas" },
+  { key: "mesas", text: "Mesas", icon: <TableBar />, path: "/app/mesas" },
+  { key: "menus", text: "Menús", icon: <Fastfood />, path: "/app/menus" },
+  { key: "habitaciones", text: "Habitaciones", icon: <RoomService />, path: "/app/habitaciones" },
+  { key: "ingresos", text: "Ingresos", icon: <AttachMoney />, path: "/app/ingresos" },
+  { key: "brazaletes", text: "Brazaletes", icon: <LocalActivity />, path: "/app/brazaletes" },
+  { key: "comandas", text: "Comandas", icon: <Assignment />, path: "/app/comandas" },
 ];
+
 
 export default function DrawerMenu({ isOpen }) {
   const location = useLocation();
+  const modulosPermitidos = getModulosPermitidos();
 
   return (
     <Drawer
@@ -59,34 +61,13 @@ export default function DrawerMenu({ isOpen }) {
     >
       <Toolbar />
       <List>
-        {menuItems.map(({ text, icon, path }) => {
-          const isActive = location.pathname === path;
-
-          return (
-            <ListItem key={text} disablePadding>
-              {isOpen ? (
-                <ListItemButton
-                  component={Link}
-                  to={path}
-                  sx={{
-                    backgroundColor: isActive ? "#1565C0" : "transparent",
-                    color: "#FFFFFF",
-                    "&:hover": {
-                      backgroundColor: "#1976D2",
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ color: "#FFFFFF" }}>{icon}</ListItemIcon>
-                  <ListItemText
-                    primary={text}
-                    primaryTypographyProps={{
-                      fontWeight: isActive ? "bold" : "normal",
-                      color: "#FFFFFF",
-                    }}
-                  />
-                </ListItemButton>
-              ) : (
-                <Tooltip title={text} placement="right" arrow>
+        {menuItems
+          .filter(item => modulosPermitidos.includes(item.key))
+          .map(({ text, icon, path }) => {
+            const isActive = location.pathname === path;
+            return (
+              <ListItem key={text} disablePadding>
+                {isOpen ? (
                   <ListItemButton
                     component={Link}
                     to={path}
@@ -98,15 +79,37 @@ export default function DrawerMenu({ isOpen }) {
                       },
                     }}
                   >
-                    <ListItemIcon sx={{ color: "#FFFFFF" }}>
-                      {icon}
-                    </ListItemIcon>
+                    <ListItemIcon sx={{ color: "#FFFFFF" }}>{icon}</ListItemIcon>
+                    <ListItemText
+                      primary={text}
+                      primaryTypographyProps={{
+                        fontWeight: isActive ? "bold" : "normal",
+                        color: "#FFFFFF",
+                      }}
+                    />
                   </ListItemButton>
-                </Tooltip>
-              )}
-            </ListItem>
-          );
-        })}
+                ) : (
+                  <Tooltip title={text} placement="right" arrow>
+                    <ListItemButton
+                      component={Link}
+                      to={path}
+                      sx={{
+                        backgroundColor: isActive ? "#1565C0" : "transparent",
+                        color: "#FFFFFF",
+                        "&:hover": {
+                          backgroundColor: "#1976D2",
+                        },
+                      }}
+                    >
+                      <ListItemIcon sx={{ color: "#FFFFFF" }}>
+                        {icon}
+                      </ListItemIcon>
+                    </ListItemButton>
+                  </Tooltip>
+                )}
+              </ListItem>
+            );
+          })}
       </List>
     </Drawer>
   );

@@ -13,6 +13,7 @@ import Menus from "./app/menus/menus";
 import Ingresos from "./app/Ingresos/ingresos";
 import Brazaletes from "./app/brazaletes/brazaletes";
 import Comandas from "./app/comandas/comandas";
+import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
   return (
@@ -24,17 +25,61 @@ function App() {
         
         {/* Rutas con Layout (menu) */}
         <Route path="/app" element={<Layout />}>
-          <Route path="areas" element={<Areas />} />
-          <Route path="usuarios" element={<Usuarios />} />
-          <Route path="inventarios" element={<Inventarios />} />
-          <Route path="solicitudes" element={<Solicitudes />} />
-          <Route path="bebidas" element={<Bebidas />} />
-          <Route path="mesas" element={<Mesas />} />
-          <Route path="menus" element={<Menus />} />
-          <Route path="habitaciones" element={<Habitaciones />} />
-          <Route path="ingresos" element={<Ingresos/>} />
-          <Route path="brazaletes" element={<Brazaletes />} />
-          <Route path="comandas" element={<Comandas />} />
+          <Route path="areas" element={
+            <ProtectedRoute modulo="areas">
+              <Areas />
+            </ProtectedRoute>
+          } />
+          <Route path="usuarios" element={
+            <ProtectedRoute modulo="usuarios">
+              <Usuarios />
+            </ProtectedRoute>
+          } />
+          <Route path="inventarios" element={
+            <ProtectedRoute modulo="inventarios">
+              <Inventarios />
+            </ProtectedRoute>
+          } />
+          <Route path="solicitudes" element={
+            <ProtectedRoute modulo="solicitudes">
+              <Solicitudes />
+            </ProtectedRoute>
+          } />
+          <Route path="bebidas" element={
+            <ProtectedRoute modulo="bebidas">
+              <Bebidas />
+            </ProtectedRoute>
+          } />
+          <Route path="mesas" element={
+            <ProtectedRoute modulo="mesas">
+              <Mesas />
+            </ProtectedRoute>
+          } />
+          <Route path="menus" element={
+            <ProtectedRoute modulo="menus">
+              <Menus />
+            </ProtectedRoute>
+          } />
+          <Route path="habitaciones" element={
+            <ProtectedRoute modulo="habitaciones">
+              <Habitaciones />
+            </ProtectedRoute>
+          } />
+          <Route path="ingresos" element={
+            <ProtectedRoute modulo="ingresos">
+              <Ingresos />
+            </ProtectedRoute>
+          } />
+          <Route path="brazaletes" element={
+            <ProtectedRoute modulo="brazaletes">
+              <Brazaletes />
+            </ProtectedRoute>
+          } />
+          <Route path="comandas" element={
+            <ProtectedRoute modulo="comandas">
+              <Comandas />
+            </ProtectedRoute>
+          } />
           {/* <Route path="table" element={<TablePage />} /> */}
         </Route>
       </Routes>

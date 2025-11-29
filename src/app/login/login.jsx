@@ -101,8 +101,9 @@ export default function LoginView() {
       // Redirigir al primer módulo permitido según el rol
       const { permisosPorRol } = require("../utils/permisos");
       const modulos = permisosPorRol[response.data.rol] || [];
+      console.log("modulos: ", modulos);
       if (modulos.length > 0) {
-        navigate(`/app/${modulos[0]}`);
+        navigate(`/app/${modulos[1]}`);
       } else {
         navigate("/app");
       }

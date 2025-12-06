@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import {
   Assignment,
+  Home,
   Domain,
   Inventory2,
   Person,
@@ -25,6 +26,7 @@ import { getModulosPermitidos } from "../../utils/auth";
 import { Tooltip } from "@mui/material";
 
 const menuItems = [
+  { key: "dashboard", text: "Dashboard Principal", icon: <Home />, path: "/app/dashboard" },
   { key: "areas", text: "Áreas", icon: <Domain />, path: "/app/areas" },
   { key: "usuarios", text: "Usuarios", icon: <Person />, path: "/app/usuarios" },
   { key: "inventarios", text: "Inventarios", icon: <Inventory2 />, path: "/app/inventarios" },

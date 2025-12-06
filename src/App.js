@@ -13,6 +13,7 @@ import Menus from "./app/menus/menus";
 import Ingresos from "./app/Ingresos/ingresos";
 import Brazaletes from "./app/brazaletes/brazaletes";
 import Comandas from "./app/comandas/comandas";
+import Dashboard from "./app/dashboard/dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
@@ -25,6 +26,12 @@ function App() {
         
         {/* Rutas con Layout (menu) */}
         <Route path="/app" element={<Layout />}>
+          <Route path="dashboard" element={
+            <ProtectedRoute modulo="dashboard">
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+
           <Route path="areas" element={
             <ProtectedRoute modulo="areas">
               <Areas />

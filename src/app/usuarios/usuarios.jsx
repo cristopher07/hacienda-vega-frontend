@@ -17,6 +17,10 @@ export default function Usuarios() {
   /** Variable para la lógica de visualización del formulariom lista y busqueda */
   const [verForm, setVerForm] = useState(false);
 
+  const rolLogueado = localStorage.getItem("rol"); 
+// valores esperados: "admin", "superAdmin", "cajera", etc.
+
+
   /** Variable para el manejo de la información de la tabla */
   const [data, setData] = useState([]);
 
@@ -54,7 +58,15 @@ export default function Usuarios() {
   const getAreaAll = async (busqueda) => {
     let objResponse = await getUsuarioByQuery(busqueda, rowsPerPage, pageFix, '');
     if (objResponse.valid) {
+      let usuarios = objResponse.data;
+
+      if(rolLogueado === "admin"){
+        usuarios = usuarios.filter(u => u.rol !== "superAdmin");
+        setData(usuarios);
+      }else{
       setData(objResponse.data);
+      }
+      
     } else {
       setData([]);
       setAlertMensaje({

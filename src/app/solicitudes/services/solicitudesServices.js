@@ -3,13 +3,24 @@ import axios from 'axios';
 //// URL ROOT
 const URL = process.env.REACT_APP_BACKEND_BASE;
 
-export const getSolicitudes = async (obj, rowsPerPage, pageFix, pagination) => {
+export const getSolicitudes = async (obj, rowsPerPage, pageFix, pagination = 1) => {
     try {
        const response = await axios.get(URL+`/solicitudes/all?busqueda=${obj}&rowsPerPage=${rowsPerPage}&page=${pageFix}&paginacion=${pagination}`)
         return response.data;
     } catch (error) {
         console.error("Error fetching solicitudes:", error);
         throw error;
+    }
+};
+
+//// LISTAR area selects
+export const listSolicitudes = async () => {
+    const urlUsuario = '/solicitudes/all';
+    try {
+      let respuesta = await axios.get(URL + urlUsuario + '?paginacion=0');
+      return respuesta.data;
+    } catch (error) {
+      return error;
     }
 };
 
@@ -38,7 +49,10 @@ export const editSolicitudes = async (obj) => {
         return response.data;
     } catch (error) {
         console.error("Error editing solicitudes:", error);
-        throw error;
+        return {
+            valid: false,
+            msg: error.response?.data?.msg || "Error al editar",
+        };
     }
 };
 

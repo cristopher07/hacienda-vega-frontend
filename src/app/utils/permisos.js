@@ -1,12 +1,12 @@
 export const permisosPorRol = {
   superAdmin: [
-    "areas", "usuarios", "inventarios", "solicitudes", "bebidas", "mesas", "menus",
-    "habitaciones", "ingresos", "brazaletes", "comandas", "cierreCajas", "dashboard"
+    "areas", "dashboard", "usuarios", "inventarios", "solicitudes", "bebidas", "mesas", "menus",
+    "habitaciones", "ingresos", "brazaletes", "comandas", "cierre"
   ],
   admin: [
-    "areas", "usuarios", "inventarios", "solicitudes", "bebidas", "mesas", "menus",
-    "habitaciones", "ingresos", "brazaletes", "dashboard"
+    "areas", "dashboard", "usuarios", "inventarios", "solicitudes", "bebidas", "mesas", "menus",
+    "habitaciones", "ingresos", "brazaletes", "cierre"
   ],
-  cajera: ["comandas", "solicitudes", "cierreCajas", "dashboard"],
-  recepcionista: ["ingresos", "solicitudes", "cierreCajas", "dashboard"]
+  cajera: ["comandas", "dashboard", "solicitudes", "cierre"],
+  recepcionista: ["ingresos", "dashboard", "solicitudes", "cierre"]
 };

@@ -20,6 +20,7 @@ import {
   RoomService,
   AttachMoney,
   LocalActivity,
+  ReceiptLong,
 } from "@mui/icons-material";
 import { Link, useLocation } from "react-router-dom";
 import { getModulosPermitidos } from "../../utils/auth";
@@ -38,6 +39,7 @@ const menuItems = [
   { key: "ingresos", text: "Ingresos", icon: <AttachMoney />, path: "/app/ingresos" },
   { key: "brazaletes", text: "Brazaletes", icon: <LocalActivity />, path: "/app/brazaletes" },
   { key: "comandas", text: "Comandas", icon: <Assignment />, path: "/app/comandas" },
+  { key: "cierre", text: "Cierre de Caja", icon: <ReceiptLong />, path: "/app/cierre" },
 ];
 
 

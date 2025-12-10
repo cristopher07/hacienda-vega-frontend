@@ -31,7 +31,7 @@ export default function FormSolicitudes({
     detalle: "",
     monto: "",
     documento: "",
-    estado: "",
+    estado: "Pendiente",
     fecha_revision: "",
   });
   const [areas, setAreas] = useState([]);
@@ -39,6 +39,7 @@ export default function FormSolicitudes({
   const [observacionLength, setObservacionLength] = useState(
     250 - (typeof data?.producto === "string" ? data.producto.length : 0)
   );
+   const rol = localStorage.getItem("rol");
 
   useEffect(() => {
     if (data?.producto) {
@@ -50,6 +51,7 @@ export default function FormSolicitudes({
         ...prev,
         ...data,
         id_area: data.idArea,
+        estado: data.estado || "Pendiente",
       }));
     }
    
@@ -253,6 +255,7 @@ export default function FormSolicitudes({
                 placeholder="Seleccione un estado"
                 label="Estado"
                 variant="outlined"
+                disabled = {!["admin", "superAdmin"].includes(rol)}
               >
                 <MenuItem value={'Aprobada'}>Aprobada</MenuItem>
                 <MenuItem value={'Rechazada'}>Rechazada</MenuItem>

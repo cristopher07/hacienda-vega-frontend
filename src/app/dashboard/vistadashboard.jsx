@@ -1,166 +1,65 @@
-import {
-  Box,
-  Paper,
-  Typography,
-  Grid,
-  Avatar,
-  Stack,
-} from "@mui/material";
+import { useState, useEffect } from "react";
+import { Box, Typography, Paper } from "@mui/material";
 
-export default function VistaIngresos({
-  totalIngresoHotel,
-  totalIngresoPiscinas,
-  totalIngresoGeneral,
-  mesActual
-}) {
+export default function DashboardBienvenida({ usuario }) {
+  
+  const [hora, setHora] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setHora(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const obtenerSaludo = () => {
+    const h = hora.getHours();
+    if (h < 12) return "Buenos días";
+    if (h < 18) return "Buenas tardes";
+    return "Buenas noches";
+  };
+
+  const fechaFormateada = hora.toLocaleDateString("es-ES", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+
+  const horaFormateada = hora.toLocaleTimeString("es-ES", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+
   return (
-    <Box sx={{ mt: 2, width: "100%", marginBottom: 6 }}>
-      {/* Row de tarjetas 6/6 con separación abajo */}
-      <Grid container spacing={2} sx={{ mb: 2 }}>
-        {/* HOTEL */}
-        <Grid item xs={4} md={4}>
-          <Paper
-            elevation={1}
-            sx={{
-              p: 2,
-              borderRadius: 2,
-              height: "100%",
-            }}
-          >
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <Stack direction="row" alignItems="center" spacing={2}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    bgcolor: "primary.light",
-                    color: "primary.dark",
-                    fontWeight: 700,
-                    width: 36,
-                    height: 36,
-                    borderRadius: 2,
-                  }}
-                >
-                  H
-                </Avatar>
-                <Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "primary.main" }}>
-                    Hotel
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Gestión de ingresos hotel
-                  </Typography>
-                </Box>
-              </Stack>
+    <Box sx={{ mt: 4, display: "flex", justifyContent: "center" }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          borderRadius: 3,
+          maxWidth: 600,
+          textAlign: "center",
+          width: "100%",
+          background: "linear-gradient(135deg, #e3f2fd, #fff)"
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
+          {obtenerSaludo()}
+        </Typography>
 
-              <Box textAlign="right">
-                <Typography variant="caption" color="text.secondary">
-                  Ingresos {mesActual}
-                </Typography>
-                <Typography variant="h6" fontWeight={700}>
-                  Q. {totalIngresoHotel}
-                </Typography>
-              </Box>
-            </Stack>
+        <Typography variant="h6" color="text.secondary" sx={{ mb: 1 }}>
+          Hoy es <strong>{fechaFormateada}</strong>
+        </Typography>
 
-     
-          </Paper>
-        </Grid>
+        <Typography variant="h5" sx={{ fontWeight: "bold", color: "primary.main" }}>
+          {horaFormateada}
+        </Typography>
 
-        {/* PISCINAS */}
-        <Grid item xs={4} md={4}>
-          <Paper
-            elevation={1}
-            sx={{
-              p: 2,
-              borderRadius: 2,
-              height: "100%",
-            }}
-          >
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <Stack direction="row" alignItems="center" spacing={2}>
-                <Avatar
-                  variant="rounded"
-                  sx={{
-                    bgcolor: "warning.light",
-                    color: "warning.dark",
-                    fontWeight: 700,
-                    width: 36,
-                    height: 36,
-                    borderRadius: 2,
-                  }}
-                >
-                  P
-                </Avatar>
-                <Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "primary.main" }}>
-                    Piscinas
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Gestión de ingresos piscinas
-                  </Typography>
-                </Box>
-              </Stack>
-
-              <Box textAlign="right">
-                <Typography variant="caption" color="text.secondary">
-                  Ingresos {mesActual}
-                </Typography>
-                <Typography variant="h6" fontWeight={700}>
-                  Q. {totalIngresoPiscinas}
-                </Typography>
-              </Box>
-            </Stack>
-          </Paper>
-        </Grid>
-
-           {/* TOTAL INGRESOS HOTEL Y PISCINAS */}
-           <Grid item xs={4} md={4}>
-             <Paper
-               elevation={1}
-               sx={{
-                 p: 2,
-                 borderRadius: 2,
-                 height: "100%",
-               }}
-             >
-               <Stack direction="row" alignItems="center" justifyContent="space-between">
-                 <Stack direction="row" alignItems="center" spacing={2}>
-                   <Avatar
-                     variant="rounded"
-                     sx={{
-                       bgcolor: "success.light",
-                       color: "success.dark",
-                       fontWeight: 700,
-                       width: 36,
-                       height: 36,
-                       borderRadius: 2,
-                     }}
-                   >
-                     T
-                   </Avatar>
-                   <Box>
-                     <Typography variant="subtitle1" sx={{ fontWeight: 700, color: "primary.main" }}>
-                       General
-                     </Typography>
-                     <Typography variant="body2" color="text.secondary">
-                       Gestión de ingresos hotel y piscinas
-                     </Typography>
-                   </Box>
-                 </Stack>
-
-                 <Box textAlign="right">
-                   <Typography variant="caption" color="text.secondary">
-                     Ingresos {mesActual}
-                   </Typography>
-                   <Typography variant="h6" fontWeight={700}>
-                    Q. {totalIngresoGeneral}
-                   </Typography>
-                 </Box>
-               </Stack>
-             </Paper>
-           </Grid>
-      </Grid>
-
+        <Typography variant="body1" sx={{ mt: 3, fontStyle: "italic" }}>
+          Bienvenido al sistema de administración 
+          de Hacienda La Vega.
+        </Typography>
+      </Paper>
     </Box>
   );
 }

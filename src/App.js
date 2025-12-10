@@ -14,6 +14,7 @@ import Ingresos from "./app/Ingresos/ingresos";
 import Brazaletes from "./app/brazaletes/brazaletes";
 import Comandas from "./app/comandas/comandas";
 import Dashboard from "./app/dashboard/dashboard";
+import Cierre from "./app/cierre/cierre";
 import ProtectedRoute from "./ProtectedRoute";
 
 function App() {
@@ -85,6 +86,11 @@ function App() {
           <Route path="comandas" element={
             <ProtectedRoute modulo="comandas">
               <Comandas />
+            </ProtectedRoute>
+          } />
+          <Route path="cierre" element={
+            <ProtectedRoute modulo="cierre">
+              <Cierre />
             </ProtectedRoute>
           } />
           {/* <Route path="table" element={<TablePage />} /> */}

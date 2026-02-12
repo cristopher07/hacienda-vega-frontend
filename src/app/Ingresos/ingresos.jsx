@@ -192,6 +192,7 @@ export default function Ingresos() {
     { id: "descripcion", label: "Descripción Ingreso" },
     { id: "monto", label: "Precio" },
     { id: "metodo", label: "Método" },
+    { id: "codigo_comprobante", label: "Comprobante" },
     {
       id: "fecha",
       label: "Fecha",

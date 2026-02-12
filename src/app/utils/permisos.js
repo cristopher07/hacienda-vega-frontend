@@ -5,7 +5,7 @@ export const permisosPorRol = {
   ],
   admin: [
     "areas", "dashboard", "usuarios", "inventarios", "solicitudes", "bebidas", "mesas", "menus",
-    "habitaciones", "ingresos", "brazaletes", "cierre"
+    "habitaciones", "ingresos", "brazaletes", "comandas", "cierre"
   ],
   cajera: ["comandas", "dashboard", "solicitudes", "cierre"],
   recepcionista: ["ingresos", "dashboard", "solicitudes", "cierre"]

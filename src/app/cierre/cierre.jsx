@@ -133,7 +133,7 @@ export default function CierreCaja() {
         });
       }
     } catch (error) {
-      enqueueSnackbar("Error al efectuar cierre", {
+      enqueueSnackbar("Error al efectuar cierre o Cierre ya realizado", {
         variant: "error",
       });
     }

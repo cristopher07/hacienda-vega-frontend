@@ -53,6 +53,7 @@ export default function ComandasForm({
     total: "",
     tipo_pago: "",
     metodo: "",
+    codigoComprobante: "",
     estado: 1,
     ...data,
   });
@@ -79,6 +80,7 @@ export default function ComandasForm({
       setFormulario((prev) => ({
         ...prev,
         ...data,
+        codigoComprobante: data.codigo_comprobante || "",
       }));
     }
   }, [data]);
@@ -153,12 +155,18 @@ export default function ComandasForm({
       setFormulario((prev) => ({
         ...prev,
         [name]: value,
+        ...(name === "tipo_pago" && value === "Efectivo"
+      ? { codigoComprobante: "" }
+      : {}),
       }));
       // Subtotal will be updated by useEffect above
     } else {
       setFormulario((prev) => ({
         ...prev,
         [name]: value,
+        ...(name === "tipo_pago" && value === "Efectivo"
+      ? { codigoComprobante: "" }
+      : {}),
       }));
     }
   };
@@ -177,6 +185,7 @@ export default function ComandasForm({
       estado: formulario.estado,
       total: formulario.total,
       tipo_pago: formulario.tipo_pago,
+      codigo_comprobante: formulario.codigoComprobante
       // Puedes agregar más campos si lo necesitas
     }));
 
@@ -321,6 +330,23 @@ export default function ComandasForm({
               </Select>
             </FormControl>
           </Grid>
+
+          {(formulario.tipo_pago === "Tarjeta" ||
+  formulario.tipo_pago === "Transferencia") && (
+            <Grid item xs={12} sm={6}>
+              <TextField
+                required
+                fullWidth
+                id="codigoComprobante"
+                name="codigoComprobante"
+                label="Código de comprobante / voucher"
+                value={formulario.codigoComprobante}
+                onChange={handleInputChange}
+                variant="outlined"
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            )}
 
                <Grid item xs={12} sm={6}>
             {/* <FormControl fullWidth variant="outlined">

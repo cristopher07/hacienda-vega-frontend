@@ -136,18 +136,20 @@ export default function Comandas() {
     { id: "nombreBebida", label: "Bebida" },
     { id: "subtotal", label: "Subtotal" },
     {
-      id: "fecha",
-      label: "Fecha",
-      render: (row) => {
-        return row.fecha
-          ? dayjs(row.fecha).subtract(6, "hour").format("DD/MM/YYYY HH:mm")
-          : "";
-      },
-    },
+  id: "fecha",
+  label: "Fecha",
+  render: (row) => {
+    return row.fecha
+      ? dayjs(row.fecha, "YYYY-MM-DD HH:mm:ss")
+          .format("DD/MM/YYYY HH:mm")
+      : "";
+  },
+},
     { id: "observacion", label: "Observación" },
     { id: "estado", label: "Estado" },
     { id: "total", label: "Total" },
     { id: "tipo_pago", label: "Tipo de pago" },
+    { id: "codigo_comprobante", label: "Código o Voucher" },
   ];
 
   const toggleTablaComandas = () => {

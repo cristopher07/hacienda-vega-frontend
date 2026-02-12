@@ -193,7 +193,7 @@ export default function FormUsuarios({
                 label="Rol "
                 variant="outlined"
               >
-                <MenuItem value="superAdmin">Súper Admin</MenuItem>
+                {/* <MenuItem value="superAdmin">Súper Admin</MenuItem> */}
                 <MenuItem value="admin">Admin</MenuItem>
                 <MenuItem value="recepcionista">Recepcionista</MenuItem>
                 <MenuItem value="cajera">Cajera</MenuItem>

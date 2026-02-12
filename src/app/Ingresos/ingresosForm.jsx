@@ -29,6 +29,7 @@ export default function FormIngresos({
     descripcion: "",
     idArea: "",
     metodo: "",
+    codigoComprobante: "",
     precio: "",
     cantidad: "",
     fechaInicio: "",
@@ -43,13 +44,15 @@ export default function FormIngresos({
   const [brazalete, setBrazalete] = useState([]);
 
   useEffect(() => {
-    if (data) {
-      setFormulario((prev) => ({
-        ...prev,
-        ...data,
-      }));
-    }
-  }, [data]);
+  if (data) {
+    setFormulario((prev) => ({
+      ...prev,
+      ...data,
+      codigoComprobante: data.codigo_comprobante || "",
+    }));
+  }
+}, [data]);
+
 
   useEffect(() => {
     getAreas();
@@ -118,6 +121,9 @@ export default function FormIngresos({
     setFormulario((prev) => ({
       ...prev,
       [name]: value,
+      ...(name === "metodo" && value === "Efectivo"
+      ? { codigoComprobante: "" }
+      : {}),
     }));
   };
 
@@ -287,6 +293,23 @@ export default function FormIngresos({
               </FormControl>
             </Grid>
 
+            {(formulario.metodo === "Tarjeta" ||
+  formulario.metodo === "Transferencia") && (
+  <Grid item xs={12} sm={6}>
+    <TextField
+      required
+      fullWidth
+      id="codigoComprobante"
+      name="codigoComprobante"
+      label="Código de comprobante / voucher"
+      value={formulario.codigoComprobante}
+      onChange={handleInputChange}
+      variant="outlined"
+      InputLabelProps={{ shrink: true }}
+    />
+  </Grid>
+)}
+
             <Grid item xs={12} sm={6}>
               <TextField
                 required
@@ -395,6 +418,24 @@ export default function FormIngresos({
                 </Select>
               </FormControl>
             </Grid>
+
+            {(formulario.metodo === "Tarjeta" ||
+  formulario.metodo === "Transferencia") && (
+  <Grid item xs={12} sm={6}>
+    <TextField
+      required
+      fullWidth
+      id="codigoComprobante"
+      name="codigoComprobante"
+      label="Código de comprobante / voucher"
+      value={formulario.codigoComprobante}
+      onChange={handleInputChange}
+      variant="outlined"
+      InputLabelProps={{ shrink: true }}
+    />
+  </Grid>
+)}
+
 
             <Grid item xs={12} sm={6}>
               <TextField
